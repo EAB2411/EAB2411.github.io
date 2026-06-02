@@ -12,39 +12,55 @@
             --grey: #888;
             --accent: #c8b89a;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        html { scroll-behavior: smooth; }
-
+        html, body { height: 100%; }
         body {
             background: var(--black);
             color: var(--white);
             font-family: 'Montserrat', sans-serif;
             font-weight: 300;
             cursor: none;
+            overflow: hidden;
         }
+        body.unlocked { overflow: auto; }
 
-        /* Custom cursor */
-        .cursor {
-            width: 8px; height: 8px;
-            background: var(--white);
-            border-radius: 50%;
+        /* CURSOR */
+        .cursor { width: 8px; height: 8px; background: var(--white); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; transition: transform 0.15s ease; }
+        .cursor-ring { width: 32px; height: 32px; border: 1px solid rgba(240,237,232,0.4); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9998; }
+
+        /* INTRO */
+        #intro {
             position: fixed;
-            top: 0; left: 0;
-            pointer-events: none;
-            z-index: 9999;
-            transition: transform 0.15s ease;
+            inset: 0;
+            background: var(--black);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            gap: 3rem;
         }
-        .cursor-ring {
-            width: 32px; height: 32px;
-            border: 1px solid rgba(240,237,232,0.4);
-            border-radius: 50%;
-            position: fixed;
-            top: 0; left: 0;
-            pointer-events: none;
-            z-index: 9998;
-            transition: all 0.08s ease;
+        #intro h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 300;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+        }
+        #house-svg {
+            opacity: 0;
+            animation: fadeIn 0.5s ease 1.6s forwards;
+        }
+        #house-path {
+            stroke-dasharray: 300;
+            stroke-dashoffset: 300;
+            animation: drawHouse 1.8s ease 1.9s forwards;
+        }
+        #intro.fade-out {
+            animation: introFadeOut 0.9s cubic-bezier(0.7,0,1,1) forwards;
         }
 
         /* NAV */
@@ -56,43 +72,23 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            mix-blend-mode: difference;
+            opacity: 0;
+            transition: opacity 0.8s ease;
         }
-        .logo {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.3rem;
-            font-weight: 400;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: var(--white);
-            text-decoration: none;
-        }
-        .nav-contact {
-            display: inline-block;
-            padding: 0.6rem 1.6rem;
-            border: 1px solid rgba(240,237,232,0.5);
-            color: var(--white);
-            text-decoration: none;
-            font-size: 0.7rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            transition: all 0.3s ease;
-        }
-        .nav-contact:hover {
-            background: var(--white);
-            color: var(--black);
-        }
+        nav.visible { opacity: 1; }
+        .logo { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 400; letter-spacing: 4px; text-transform: uppercase; color: var(--white); text-decoration: none; }
+        .nav-contact { display: inline-block; padding: 0.6rem 1.6rem; border: 1px solid rgba(240,237,232,0.5); color: var(--white); text-decoration: none; font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; transition: all 0.3s ease; }
+        .nav-contact:hover { background: var(--white); color: var(--black); }
 
         /* HERO */
         .hero {
-            position: relative;
-            height: 100vh;
+            position: fixed;
+            inset: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            z-index: 1;
         }
-
         .hero-bg {
             position: absolute;
             inset: 0;
@@ -101,196 +97,53 @@
             background-position: center;
             opacity: 0;
             transform: scale(1.05);
-            transition: opacity 0.1s ease, transform 0.1s ease;
         }
+        .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(8,8,8,0.3), rgba(8,8,8,0.6)); }
+        .hero-text { position: relative; text-align: center; z-index: 2; }
+        .hero-text h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(3rem, 8vw, 7rem); font-weight: 300; letter-spacing: 8px; text-transform: uppercase; line-height: 1; margin-bottom: 1rem; }
+        .hero-text p { font-size: 0.75rem; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); }
 
-        .hero-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to bottom, rgba(8,8,8,0.3) 0%, rgba(8,8,8,0.5) 100%);
-        }
+        .scroll-hint { position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 0.5rem; z-index: 2; }
+        .scroll-hint span { font-size: 0.6rem; letter-spacing: 3px; text-transform: uppercase; color: var(--grey); }
+        .scroll-line { width: 1px; height: 40px; background: linear-gradient(to bottom, var(--accent), transparent); animation: scrollPulse 2s ease infinite; }
 
-        .hero-text {
+        /* MAIN CONTENT */
+        #main-content {
             position: relative;
-            text-align: center;
             z-index: 2;
-            transition: opacity 0.05s ease;
-        }
-        .hero-text h1 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(3rem, 8vw, 7rem);
-            font-weight: 300;
-            letter-spacing: 8px;
-            text-transform: uppercase;
-            line-height: 1;
-            margin-bottom: 1rem;
+            margin-top: 100vh;
+            background: var(--black);
             opacity: 0;
-            transform: translateY(30px);
-            animation: fadeUp 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+            transition: opacity 0.6s ease;
         }
-        .hero-text p {
-            font-size: 0.75rem;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: var(--accent);
-            opacity: 0;
-            animation: fadeUp 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.7s forwards;
-        }
+        #main-content.visible { opacity: 1; }
 
-        .scroll-hint {
-            position: absolute;
-            bottom: 2.5rem;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            opacity: 0;
-            animation: fadeUp 1s ease 1.5s forwards;
-            z-index: 2;
-        }
-        .scroll-hint span {
-            font-size: 0.6rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: var(--grey);
-        }
-        .scroll-line {
-            width: 1px;
-            height: 40px;
-            background: linear-gradient(to bottom, var(--accent), transparent);
-            animation: scrollPulse 2s ease infinite;
-        }
+        .tjenester { padding: 8rem 3rem; max-width: 1000px; margin: 0 auto; }
+        .section-label { font-size: 0.65rem; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); margin-bottom: 3rem; display: flex; align-items: center; gap: 1rem; }
+        .section-label::after { content: ''; display: block; height: 1px; width: 60px; background: var(--accent); opacity: 0.4; }
+        .tjeneste-item { padding: 3rem 0; border-top: 1px solid #1e1e1e; display: grid; grid-template-columns: 1fr 2fr; gap: 3rem; align-items: start; opacity: 0; transform: translateY(20px); transition: opacity 0.7s ease, transform 0.7s ease; }
+        .tjeneste-item.visible { opacity: 1; transform: translateY(0); }
+        .tjeneste-num { font-family: 'Cormorant Garamond', serif; font-size: 3rem; color: #1e1e1e; line-height: 1; }
+        .tjeneste-content h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 400; margin-bottom: 1rem; letter-spacing: 1px; }
+        .tjeneste-content p { color: var(--grey); line-height: 1.9; font-size: 0.85rem; }
 
-        /* TJENESTER */
-        .tjenester {
-            padding: 8rem 3rem;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-        .section-label {
-            font-size: 0.65rem;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: var(--accent);
-            margin-bottom: 3rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        .section-label::after {
-            content: '';
-            display: block;
-            height: 1px;
-            width: 60px;
-            background: var(--accent);
-            opacity: 0.4;
-        }
-        .tjeneste-item {
-            padding: 3rem 0;
-            border-top: 1px solid #1e1e1e;
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 3rem;
-            align-items: start;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.7s ease, transform 0.7s ease;
-        }
-        .tjeneste-item.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .tjeneste-num {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 3rem;
-            color: #1e1e1e;
-            line-height: 1;
-        }
-        .tjeneste-content h3 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.8rem;
-            font-weight: 400;
-            margin-bottom: 1rem;
-            letter-spacing: 1px;
-        }
-        .tjeneste-content p {
-            color: var(--grey);
-            line-height: 1.9;
-            font-size: 0.85rem;
-        }
-
-        /* KONTAKT */
-        .kontakt {
-            padding: 8rem 3rem;
-            text-align: center;
-            border-top: 1px solid #1e1e1e;
-        }
-        .kontakt-inner {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        .kontakt h2 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: 300;
-            letter-spacing: 3px;
-            margin-bottom: 1.5rem;
-            line-height: 1.1;
-        }
-        .kontakt p {
-            color: var(--grey);
-            font-size: 0.85rem;
-            line-height: 1.9;
-            margin-bottom: 3rem;
-        }
-        .kontakt-btn {
-            display: inline-block;
-            padding: 1.1rem 3rem;
-            border: 1px solid var(--accent);
-            color: var(--white);
-            text-decoration: none;
-            font-size: 0.7rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .kontakt-btn::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: var(--accent);
-            transform: translateX(-100%);
-            transition: transform 0.4s ease;
-            z-index: -1;
-        }
+        .kontakt { padding: 8rem 3rem; text-align: center; border-top: 1px solid #1e1e1e; }
+        .kontakt-inner { max-width: 600px; margin: 0 auto; }
+        .kontakt h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 300; letter-spacing: 3px; margin-bottom: 1.5rem; line-height: 1.1; }
+        .kontakt p { color: var(--grey); font-size: 0.85rem; line-height: 1.9; margin-bottom: 3rem; }
+        .kontakt-btn { display: inline-block; padding: 1.1rem 3rem; border: 1px solid var(--accent); color: var(--white); text-decoration: none; font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; transition: all 0.4s ease; position: relative; overflow: hidden; }
+        .kontakt-btn::before { content: ''; position: absolute; inset: 0; background: var(--accent); transform: translateX(-100%); transition: transform 0.4s ease; z-index: -1; }
         .kontakt-btn:hover::before { transform: translateX(0); }
         .kontakt-btn:hover { color: var(--black); }
 
-        footer {
-            padding: 2rem 3rem;
-            border-top: 1px solid #1e1e1e;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        footer p {
-            font-size: 0.7rem;
-            color: #333;
-            letter-spacing: 1px;
-        }
+        footer { padding: 2rem 3rem; border-top: 1px solid #1e1e1e; display: flex; justify-content: space-between; align-items: center; }
+        footer p { font-size: 0.7rem; color: #333; letter-spacing: 1px; }
 
-        /* ANIMATIONS */
-        @keyframes fadeUp {
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes scrollPulse {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
-        }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { to { opacity: 1; } }
+        @keyframes drawHouse { to { stroke-dashoffset: 0; } }
+        @keyframes introFadeOut { to { opacity: 0; visibility: hidden; } }
+        @keyframes scrollPulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
         @media (max-width: 768px) {
             nav { padding: 1.5rem; }
@@ -305,66 +158,73 @@
     <div class="cursor" id="cursor"></div>
     <div class="cursor-ring" id="cursorRing"></div>
 
-    <nav>
+    <!-- INTRO -->
+    <div id="intro">
+        <h1>Berg Boligfoto</h1>
+        <svg id="house-svg" width="80" height="70" viewBox="0 0 80 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path id="house-path"
+                d="M40 5 L75 35 L65 35 L65 65 L45 65 L45 48 L35 48 L35 65 L15 65 L15 35 L5 35 Z"
+                stroke="#c8b89a" stroke-width="1.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+        </svg>
+    </div>
+
+    <nav id="nav">
         <a href="#" class="logo">Berg Boligfoto</a>
         <a href="#kontakt" class="nav-contact">Kontakt</a>
     </nav>
 
-    <!-- HERO -->
-    <section class="hero" id="hero">
+    <!-- HERO (fixed bak) -->
+    <div class="hero" id="hero">
         <div class="hero-bg" id="heroBg"></div>
         <div class="hero-overlay"></div>
         <div class="hero-text" id="heroText">
-            <h1>Berg<br>Boligfoto</h1>
+            <h1>Berg Boligfoto</h1>
             <p>Eiendomsfotografi · Levanger & omegn</p>
         </div>
-        <div class="scroll-hint">
+        <div class="scroll-hint" id="scrollHint">
             <span>Scroll</span>
             <div class="scroll-line"></div>
         </div>
-    </section>
+    </div>
 
-    <!-- TJENESTER -->
-    <section class="tjenester" id="tjenester">
-        <div class="section-label">Tjenester</div>
-        <div class="tjeneste-item">
-            <div class="tjeneste-num">01</div>
-            <div class="tjeneste-content">
-                <h3>Boligfotografi</h3>
-                <p>Profesjonelle bilder som fremhever boligens beste sider. Med riktig lys, komposisjon og etterbehandling presenteres boligen på sitt beste – og skaper en sterkere første inntrykk hos potensielle kjøpere.</p>
+    <!-- MAIN CONTENT -->
+    <div id="main-content">
+        <section class="tjenester">
+            <div class="section-label">Tjenester</div>
+            <div class="tjeneste-item">
+                <div class="tjeneste-num">01</div>
+                <div class="tjeneste-content">
+                    <h3>Boligfotografi</h3>
+                    <p>Profesjonelle bilder som fremhever boligens beste sider. Med riktig lys, komposisjon og etterbehandling presenteres boligen på sitt beste – og skaper en sterkere første inntrykk hos potensielle kjøpere.</p>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- KONTAKT -->
-    <section class="kontakt" id="kontakt">
-        <div class="kontakt-inner">
-            <div class="section-label" style="justify-content:center">Kontakt</div>
-            <h2>La oss skape noe bra sammen</h2>
-            <p>Ta kontakt for pristilbud eller spørsmål. Jeg dekker Levanger og omkringliggende kommuner.</p>
-            <a href="mailto:hei@bergboligfoto.no" class="kontakt-btn">Send en melding</a>
-        </div>
-    </section>
+        <section class="kontakt" id="kontakt">
+            <div class="kontakt-inner">
+                <div class="section-label" style="justify-content:center">Kontakt</div>
+                <h2>La oss skape noe bra sammen</h2>
+                <p>Ta kontakt for pristilbud eller spørsmål. Jeg dekker Levanger og omkringliggende kommuner.</p>
+                <a href="mailto:hei@bergboligfoto.no" class="kontakt-btn">Send en melding</a>
+            </div>
+        </section>
 
-    <footer>
-        <p>© 2025 Berg Boligfoto</p>
-        <p>Levanger, Trøndelag</p>
-    </footer>
+        <footer>
+            <p>© 2025 Berg Boligfoto</p>
+            <p>Levanger, Trøndelag</p>
+        </footer>
+    </div>
 
     <script>
-        // Custom cursor
+        // Cursor
         const cursor = document.getElementById('cursor');
         const ring = document.getElementById('cursorRing');
-        let mouseX = 0, mouseY = 0;
-        let ringX = 0, ringY = 0;
-
+        let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
         document.addEventListener('mousemove', e => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
+            mouseX = e.clientX; mouseY = e.clientY;
             cursor.style.left = mouseX - 4 + 'px';
             cursor.style.top = mouseY - 4 + 'px';
         });
-
         function animateRing() {
             ringX += (mouseX - ringX - 16) * 0.12;
             ringY += (mouseY - ringY - 16) * 0.12;
@@ -373,36 +233,80 @@
             requestAnimationFrame(animateRing);
         }
         animateRing();
-
         document.querySelectorAll('a').forEach(el => {
             el.addEventListener('mouseenter', () => cursor.style.transform = 'scale(3)');
             el.addEventListener('mouseleave', () => cursor.style.transform = 'scale(1)');
         });
 
-        // Scroll-based hero fade
-        const heroText = document.getElementById('heroText');
+        // Intro -> hovedside
+        const intro = document.getElementById('intro');
+        const nav = document.getElementById('nav');
         const heroBg = document.getElementById('heroBg');
+        const heroText = document.getElementById('heroText');
+        const mainContent = document.getElementById('main-content');
 
-        window.addEventListener('scroll', () => {
-            const scrollY = window.scrollY;
-            const vh = window.innerHeight;
-            const progress = Math.min(scrollY / (vh * 0.7), 1);
+        // Etter at hus er ferdig tegnet (ca 3.8s), fade ut intro
+        setTimeout(() => {
+            intro.classList.add('fade-out');
+            setTimeout(() => {
+                intro.style.display = 'none';
+                nav.classList.add('visible');
+                mainContent.classList.add('visible');
+                document.body.classList.add('unlocked');
+            }, 900);
+        }, 3800);
 
-            // Text fades out
-            heroText.style.opacity = 1 - progress * 1.5;
+        // Locked scroll – hero-overgang
+        let heroProgress = 0;
+        let isHeroLocked = true;
+        let accumulatedScroll = 0;
+        const scrollNeeded = window.innerHeight;
 
-            // Image fades in
-            heroBg.style.opacity = progress * 0.75;
-            heroBg.style.transform = `scale(${1.05 - progress * 0.05})`;
-        });
+        window.addEventListener('wheel', e => {
+            if (!isHeroLocked) return;
+            e.preventDefault();
+            accumulatedScroll += e.deltaY;
+            heroProgress = Math.max(0, Math.min(accumulatedScroll / scrollNeeded, 1));
 
-        // Scroll reveal for tjenester
+            // Tekst fader ut
+            heroText.style.opacity = Math.max(0, 1 - heroProgress * 2);
+            document.getElementById('scrollHint').style.opacity = Math.max(0, 1 - heroProgress * 3);
+
+            // Bilde fader inn
+            heroBg.style.opacity = heroProgress * 0.8;
+            heroBg.style.transform = `scale(${1.05 - heroProgress * 0.05})`;
+
+            // Når bildet er fullt synlig, lås opp normal scroll
+            if (heroProgress >= 1) {
+                isHeroLocked = false;
+                document.getElementById('hero').style.position = 'relative';
+                document.getElementById('hero').style.zIndex = '1';
+            }
+        }, { passive: false });
+
+        // Touch support
+        let touchStartY = 0;
+        window.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; });
+        window.addEventListener('touchmove', e => {
+            if (!isHeroLocked) return;
+            e.preventDefault();
+            const delta = touchStartY - e.touches[0].clientY;
+            touchStartY = e.touches[0].clientY;
+            accumulatedScroll += delta;
+            heroProgress = Math.max(0, Math.min(accumulatedScroll / scrollNeeded, 1));
+            heroText.style.opacity = Math.max(0, 1 - heroProgress * 2);
+            heroBg.style.opacity = heroProgress * 0.8;
+            heroBg.style.transform = `scale(${1.05 - heroProgress * 0.05})`;
+            if (heroProgress >= 1) {
+                isHeroLocked = false;
+                document.getElementById('hero').style.position = 'relative';
+            }
+        }, { passive: false });
+
+        // Scroll reveal
         const observer = new IntersectionObserver(entries => {
-            entries.forEach(e => {
-                if (e.isIntersecting) e.target.classList.add('visible');
-            });
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
         }, { threshold: 0.2 });
-
         document.querySelectorAll('.tjeneste-item').forEach(el => observer.observe(el));
     </script>
 </body>
