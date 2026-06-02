@@ -9,8 +9,8 @@
         :root {
             --black: #080808;
             --white: #f0ede8;
-            --grey: #888;
-            --accent: #c8b89a;
+            --grey: #aaa;
+            --accent: #ddd0b8;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body { height: 100%; }
@@ -22,66 +22,55 @@
             cursor: none;
             overflow: hidden;
         }
-        body.unlocked { overflow: auto; }
+        body.unlocked { overflow-y: auto; }
 
         /* CURSOR */
         .cursor { width: 8px; height: 8px; background: var(--white); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; transition: transform 0.15s ease; }
         .cursor-ring { width: 32px; height: 32px; border: 1px solid rgba(240,237,232,0.4); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9998; }
 
-        /* INTRO */
+        /* INTRO OVERLAY – kun hus-symbolet */
         #intro {
             position: fixed;
             inset: 0;
-            background: var(--black);
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
-            gap: 3rem;
+            z-index: 500;
+            pointer-events: none;
         }
-        #intro h1 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(2.5rem, 6vw, 5rem);
-            font-weight: 300;
-            letter-spacing: 8px;
-            text-transform: uppercase;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
-        }
-        #house-svg {
+        #intro-house {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, 60px);
             opacity: 0;
             animation: fadeIn 0.5s ease 1.6s forwards;
+            transition: opacity 0.8s ease;
         }
+        #intro-house.fade-out { opacity: 0 !important; }
         #house-path {
             stroke-dasharray: 300;
             stroke-dashoffset: 300;
             animation: drawHouse 1.8s ease 1.9s forwards;
-        }
-        #intro.fade-out {
-            animation: introFadeOut 0.9s cubic-bezier(0.7,0,1,1) forwards;
         }
 
         /* NAV */
         nav {
             position: fixed;
             top: 0; left: 0; right: 0;
-            z-index: 100;
+            z-index: 200;
             padding: 2rem 3rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            opacity: 0;
-            transition: opacity 0.8s ease;
         }
-        nav.visible { opacity: 1; }
         .logo { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 400; letter-spacing: 4px; text-transform: uppercase; color: var(--white); text-decoration: none; }
-        .nav-contact { display: inline-block; padding: 0.6rem 1.6rem; border: 1px solid rgba(240,237,232,0.5); color: var(--white); text-decoration: none; font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; transition: all 0.3s ease; }
+        .nav-contact { display: inline-block; padding: 0.6rem 1.6rem; border: 1px solid rgba(240,237,232,0.5); color: var(--white); text-decoration: none; font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; transition: all 0.3s ease; opacity: 0; transition: opacity 0.8s ease, background 0.3s ease, color 0.3s ease; }
+        .nav-contact.visible { opacity: 1; }
         .nav-contact:hover { background: var(--white); color: var(--black); }
 
         /* HERO */
-        .hero {
+        #hero {
             position: fixed;
             inset: 0;
             display: flex;
@@ -89,22 +78,28 @@
             justify-content: center;
             z-index: 1;
         }
-        .hero-bg {
+        #hero-bg {
             position: absolute;
             inset: 0;
             background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1800&q=80');
             background-size: cover;
             background-position: center;
             opacity: 0;
-            transform: scale(1.05);
         }
-        .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(8,8,8,0.3), rgba(8,8,8,0.6)); }
-        .hero-text { position: relative; text-align: center; z-index: 2; }
-        .hero-text h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(3rem, 8vw, 7rem); font-weight: 300; letter-spacing: 8px; text-transform: uppercase; line-height: 1; margin-bottom: 1rem; }
-        .hero-text p { font-size: 0.75rem; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); }
+        .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(8,8,8,0.2), rgba(8,8,8,0.55)); pointer-events: none; }
 
-        .scroll-hint { position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 0.5rem; z-index: 2; }
-        .scroll-hint span { font-size: 0.6rem; letter-spacing: 3px; text-transform: uppercase; color: var(--grey); }
+        #hero-text {
+            position: relative;
+            text-align: center;
+            z-index: 2;
+            opacity: 0;
+            animation: fadeUp 1.2s cubic-bezier(0.16,1,0.3,1) 0.3s forwards;
+        }
+        #hero-text h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(3rem, 8vw, 7rem); font-weight: 300; letter-spacing: 8px; text-transform: uppercase; line-height: 1; margin-bottom: 1rem; }
+        #hero-text p { font-size: 0.75rem; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); opacity: 0; animation: fadeUp 1.2s cubic-bezier(0.16,1,0.3,1) 0.7s forwards; }
+
+        #scroll-hint { position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 0.5rem; z-index: 2; opacity: 0; animation: fadeUp 1s ease 1.5s forwards; transition: opacity 0.3s ease; }
+        #scroll-hint span { font-size: 0.6rem; letter-spacing: 3px; text-transform: uppercase; color: var(--grey); }
         .scroll-line { width: 1px; height: 40px; background: linear-gradient(to bottom, var(--accent), transparent); animation: scrollPulse 2s ease infinite; }
 
         /* MAIN CONTENT */
@@ -120,29 +115,28 @@
 
         .tjenester { padding: 8rem 3rem; max-width: 1000px; margin: 0 auto; }
         .section-label { font-size: 0.65rem; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); margin-bottom: 3rem; display: flex; align-items: center; gap: 1rem; }
-        .section-label::after { content: ''; display: block; height: 1px; width: 60px; background: var(--accent); opacity: 0.4; }
-        .tjeneste-item { padding: 3rem 0; border-top: 1px solid #1e1e1e; display: grid; grid-template-columns: 1fr 2fr; gap: 3rem; align-items: start; opacity: 0; transform: translateY(20px); transition: opacity 0.7s ease, transform 0.7s ease; }
+        .section-label::after { content: ''; display: block; height: 1px; width: 60px; background: var(--accent); opacity: 0.5; }
+        .tjeneste-item { padding: 3rem 0; border-top: 1px solid #2a2a2a; display: grid; grid-template-columns: 1fr 2fr; gap: 3rem; align-items: start; opacity: 0; transform: translateY(20px); transition: opacity 0.7s ease, transform 0.7s ease; }
         .tjeneste-item.visible { opacity: 1; transform: translateY(0); }
-        .tjeneste-num { font-family: 'Cormorant Garamond', serif; font-size: 3rem; color: #1e1e1e; line-height: 1; }
+        .tjeneste-num { font-family: 'Cormorant Garamond', serif; font-size: 3rem; color: #555; line-height: 1; }
         .tjeneste-content h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 400; margin-bottom: 1rem; letter-spacing: 1px; }
         .tjeneste-content p { color: var(--grey); line-height: 1.9; font-size: 0.85rem; }
 
-        .kontakt { padding: 8rem 3rem; text-align: center; border-top: 1px solid #1e1e1e; }
+        .kontakt { padding: 8rem 3rem; text-align: center; border-top: 1px solid #2a2a2a; }
         .kontakt-inner { max-width: 600px; margin: 0 auto; }
         .kontakt h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 300; letter-spacing: 3px; margin-bottom: 1.5rem; line-height: 1.1; }
         .kontakt p { color: var(--grey); font-size: 0.85rem; line-height: 1.9; margin-bottom: 3rem; }
-        .kontakt-btn { display: inline-block; padding: 1.1rem 3rem; border: 1px solid var(--accent); color: var(--white); text-decoration: none; font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; transition: all 0.4s ease; position: relative; overflow: hidden; }
+        .kontakt-btn { display: inline-block; padding: 1.1rem 3rem; border: 1px solid var(--accent); color: var(--white); text-decoration: none; font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; position: relative; overflow: hidden; }
         .kontakt-btn::before { content: ''; position: absolute; inset: 0; background: var(--accent); transform: translateX(-100%); transition: transform 0.4s ease; z-index: -1; }
         .kontakt-btn:hover::before { transform: translateX(0); }
         .kontakt-btn:hover { color: var(--black); }
 
-        footer { padding: 2rem 3rem; border-top: 1px solid #1e1e1e; display: flex; justify-content: space-between; align-items: center; }
-        footer p { font-size: 0.7rem; color: #333; letter-spacing: 1px; }
+        footer { padding: 2rem 3rem; border-top: 1px solid #2a2a2a; display: flex; justify-content: space-between; align-items: center; }
+        footer p { font-size: 0.7rem; color: #555; letter-spacing: 1px; }
 
         @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeIn { to { opacity: 1; } }
         @keyframes drawHouse { to { stroke-dashoffset: 0; } }
-        @keyframes introFadeOut { to { opacity: 0; visibility: hidden; } }
         @keyframes scrollPulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
         @media (max-width: 768px) {
@@ -158,36 +152,35 @@
     <div class="cursor" id="cursor"></div>
     <div class="cursor-ring" id="cursorRing"></div>
 
-    <!-- INTRO -->
+    <!-- Hus-symbol (intro overlay) -->
     <div id="intro">
-        <h1>Berg Boligfoto</h1>
-        <svg id="house-svg" width="80" height="70" viewBox="0 0 80 70" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path id="house-path"
-                d="M40 5 L75 35 L65 35 L65 65 L45 65 L45 48 L35 48 L35 65 L15 65 L15 35 L5 35 Z"
-                stroke="#c8b89a" stroke-width="1.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
-        </svg>
+        <div id="intro-house">
+            <svg width="80" height="70" viewBox="0 0 80 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path id="house-path"
+                    d="M40 5 L75 35 L65 35 L65 65 L45 65 L45 48 L35 48 L35 65 L15 65 L15 35 L5 35 Z"
+                    stroke="#ddd0b8" stroke-width="1.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+            </svg>
+        </div>
     </div>
 
-    <nav id="nav">
+    <nav>
         <a href="#" class="logo">Berg Boligfoto</a>
-        <a href="#kontakt" class="nav-contact">Kontakt</a>
+        <a href="#kontakt" class="nav-contact" id="navContact">Kontakt</a>
     </nav>
 
-    <!-- HERO (fixed bak) -->
-    <div class="hero" id="hero">
-        <div class="hero-bg" id="heroBg"></div>
+    <div id="hero">
+        <div id="hero-bg"></div>
         <div class="hero-overlay"></div>
-        <div class="hero-text" id="heroText">
+        <div id="hero-text">
             <h1>Berg Boligfoto</h1>
             <p>Eiendomsfotografi · Levanger & omegn</p>
         </div>
-        <div class="scroll-hint" id="scrollHint">
+        <div id="scroll-hint">
             <span>Scroll</span>
             <div class="scroll-line"></div>
         </div>
     </div>
 
-    <!-- MAIN CONTENT -->
     <div id="main-content">
         <section class="tjenester">
             <div class="section-label">Tjenester</div>
@@ -238,69 +231,107 @@
             el.addEventListener('mouseleave', () => cursor.style.transform = 'scale(1)');
         });
 
-        // Intro -> hovedside
-        const intro = document.getElementById('intro');
-        const nav = document.getElementById('nav');
-        const heroBg = document.getElementById('heroBg');
-        const heroText = document.getElementById('heroText');
-        const mainContent = document.getElementById('main-content');
+        // Elementer
+        const heroBg       = document.getElementById('hero-bg');
+        const heroText     = document.getElementById('hero-text');
+        const scrollHint   = document.getElementById('scroll-hint');
+        const introHouse   = document.getElementById('intro-house');
+        const navContact   = document.getElementById('navContact');
+        const mainContent  = document.getElementById('main-content');
+        const heroEl       = document.getElementById('hero');
 
-        // Etter at hus er ferdig tegnet (ca 3.8s), fade ut intro
+        // Intro: fade ut huset etter animasjon, lås opp siden
         setTimeout(() => {
-            intro.classList.add('fade-out');
+            introHouse.classList.add('fade-out');
             setTimeout(() => {
-                intro.style.display = 'none';
-                nav.classList.add('visible');
+                navContact.classList.add('visible');
                 mainContent.classList.add('visible');
                 document.body.classList.add('unlocked');
-            }, 900);
+            }, 800);
         }, 3800);
 
-        // Locked scroll – hero-overgang
-        let heroProgress = 0;
-        let isHeroLocked = true;
-        let accumulatedScroll = 0;
+        // Scroll-logikk
         const scrollNeeded = window.innerHeight;
+        let accumulatedScroll = 0;
+        let heroLocked = true;
 
+        function applyHeroProgress(progress) {
+            // klem til 0–1
+            progress = Math.max(0, Math.min(progress, 1));
+
+            // Subtitle og scroll-hint fader raskere ut
+            const subtitleEl = heroText.querySelector('p');
+            subtitleEl.style.opacity = Math.max(0, 1 - progress * 3);
+            scrollHint.style.opacity = Math.max(0, 1 - progress * 3);
+
+            // Overskrift fader ut fra 40% til 90% av progress
+            const textProgress = Math.max(0, (progress - 0.1) / 0.7);
+            heroText.style.opacity = Math.max(0, 1 - textProgress * 1.4);
+
+            // Bilde fader inn – men bare til 100vh, ingen cropping
+            heroBg.style.opacity = Math.min(progress * 1.1, 0.85);
+            heroBg.style.transform = `scale(${1.04 - progress * 0.04})`;
+
+            // Når vi er helt oppe igjen
+            if (progress <= 0) {
+                heroLocked = true;
+                heroEl.style.position = 'fixed';
+                window.scrollTo(0, 0);
+            }
+
+            // Lås opp normal scroll når bildet er fullt synlig
+            if (progress >= 1 && heroLocked) {
+                heroLocked = false;
+                heroEl.style.position = 'fixed'; // forblir fixed i bakgrunnen
+            }
+        }
+
+        // Wheel
         window.addEventListener('wheel', e => {
-            if (!isHeroLocked) return;
+            if (!heroLocked) {
+                // Sjekk om vi er scrollet til toppen igjen
+                if (window.scrollY === 0 && e.deltaY < 0) {
+                    heroLocked = true;
+                    accumulatedScroll = scrollNeeded;
+                }
+                return;
+            }
             e.preventDefault();
-            accumulatedScroll += e.deltaY;
-            heroProgress = Math.max(0, Math.min(accumulatedScroll / scrollNeeded, 1));
+            accumulatedScroll = Math.max(0, Math.min(accumulatedScroll + e.deltaY, scrollNeeded));
+            const progress = accumulatedScroll / scrollNeeded;
+            applyHeroProgress(progress);
 
-            // Tekst fader ut
-            heroText.style.opacity = Math.max(0, 1 - heroProgress * 2);
-            document.getElementById('scrollHint').style.opacity = Math.max(0, 1 - heroProgress * 3);
-
-            // Bilde fader inn
-            heroBg.style.opacity = heroProgress * 0.8;
-            heroBg.style.transform = `scale(${1.05 - heroProgress * 0.05})`;
-
-            // Når bildet er fullt synlig, lås opp normal scroll
-            if (heroProgress >= 1) {
-                isHeroLocked = false;
-                document.getElementById('hero').style.position = 'relative';
-                document.getElementById('hero').style.zIndex = '1';
+            if (progress >= 1) {
+                heroLocked = false;
             }
         }, { passive: false });
 
-        // Touch support
+        // Normal scroll for å gå tilbake til toppen
+        window.addEventListener('scroll', () => {
+            if (!heroLocked && window.scrollY === 0) {
+                heroLocked = true;
+                accumulatedScroll = scrollNeeded;
+            }
+            // Juster hero mens man scroller normalt (for tilbake-effekten)
+            if (!heroLocked) {
+                const backProgress = 1 - (window.scrollY / (scrollNeeded * 0.3));
+                if (window.scrollY < scrollNeeded * 0.3) {
+                    applyHeroProgress(Math.max(backProgress, 1));
+                }
+            }
+        });
+
+        // Touch
         let touchStartY = 0;
         window.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; });
         window.addEventListener('touchmove', e => {
-            if (!isHeroLocked) return;
+            if (!heroLocked) return;
             e.preventDefault();
             const delta = touchStartY - e.touches[0].clientY;
             touchStartY = e.touches[0].clientY;
-            accumulatedScroll += delta;
-            heroProgress = Math.max(0, Math.min(accumulatedScroll / scrollNeeded, 1));
-            heroText.style.opacity = Math.max(0, 1 - heroProgress * 2);
-            heroBg.style.opacity = heroProgress * 0.8;
-            heroBg.style.transform = `scale(${1.05 - heroProgress * 0.05})`;
-            if (heroProgress >= 1) {
-                isHeroLocked = false;
-                document.getElementById('hero').style.position = 'relative';
-            }
+            accumulatedScroll = Math.max(0, Math.min(accumulatedScroll + delta, scrollNeeded));
+            applyHeroProgress(accumulatedScroll / scrollNeeded);
+            if (accumulatedScroll >= scrollNeeded) heroLocked = false;
         }, { passive: false });
 
         // Scroll reveal
