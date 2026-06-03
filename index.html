@@ -8,8 +8,8 @@
     <style>
         :root { --black:#080808; --white:#f0ede8; --grey:#bbb; --accent:#e8d8c0; }
         * { margin:0; padding:0; box-sizing:border-box; }
-        html,body { height:100%; }
-        body { background:var(--black); color:var(--white); font-family:'Montserrat',sans-serif; font-weight:300; cursor:none; overflow:hidden; }
+        html,body { height:100%; overflow:hidden; }
+        body { background:var(--black); color:var(--white); font-family:'Montserrat',sans-serif; font-weight:300; cursor:none; }
 
         /* CURSOR */
         .cursor { width:8px; height:8px; background:var(--white); border-radius:50%; position:fixed; top:0; left:0; pointer-events:none; z-index:9999; transition:transform 0.15s ease; }
@@ -39,7 +39,7 @@
         .nav-contact.visible { opacity:1; }
         .nav-contact:hover { background:var(--white); color:var(--black); }
 
-        /* HERO */
+        /* HERO – fixed, always behind */
         #hero { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:1; }
         #hero-bg { position:absolute; inset:0; background-image:url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1800&q=80'); background-size:cover; background-position:center; opacity:0; transform:scale(1.04); }
         .hero-overlay { position:absolute; inset:0; background:linear-gradient(to bottom,rgba(8,8,8,0.2),rgba(8,8,8,0.55)); pointer-events:none; }
@@ -50,10 +50,17 @@
         #scroll-hint span { font-size:0.6rem; letter-spacing:3px; text-transform:uppercase; color:var(--grey); }
         .scroll-line { width:1px; height:40px; background:linear-gradient(to bottom,var(--accent),transparent); animation:scrollPulse 2s ease infinite; }
 
-        /* MAIN CONTENT – each section is one full page */
-        #main-content { position:relative; z-index:2; margin-top:100vh; background:var(--black); }
+        /* MAIN CONTENT – moved via transform, NOT window.scrollTo */
+        #main-content {
+            position:fixed;
+            top:0; left:0; right:0;
+            z-index:2;
+            will-change:transform;
+            /* starts below viewport: translateY(100vh) */
+            transform:translateY(100vh);
+        }
 
-        /* ALL SECTIONS – full viewport height, content centered */
+        /* SECTIONS – each exactly one viewport tall */
         #main-content section {
             height:100vh;
             display:flex;
@@ -61,12 +68,11 @@
             align-items:center;
             justify-content:center;
             border-top:1px solid #1e1e1e;
-            opacity:0;
-            transition:opacity 0.8s ease;
+            background:var(--black);
         }
-        #main-content section.visible { opacity:1; }
 
         .section-inner { width:100%; max-width:1000px; padding:0 4rem; }
+        .section-inner--wide { max-width:1100px; }
 
         /* SECTION LABEL */
         .section-label { font-size:0.7rem; letter-spacing:4px; text-transform:uppercase; color:var(--accent); margin-bottom:2.5rem; display:flex; align-items:center; gap:1rem; }
@@ -84,21 +90,33 @@
         .tjeneste-content h3 { font-family:'Cormorant Garamond',serif; font-size:2.5rem; font-weight:400; margin-bottom:1rem; letter-spacing:1px; }
         .tjeneste-content p { color:var(--grey); line-height:1.9; font-size:0.95rem; }
 
-        /* PORTFOLIO – 2×2 grid */
-        .section-inner--wide { max-width:1100px; }
-        .portfolio-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:0.9rem; margin-top:2rem; }
-        .pg-card { position:relative; overflow:hidden; cursor:pointer; }
-        .pg-card img { width:100%; aspect-ratio:16/9; object-fit:cover; display:block; transition:transform 0.7s cubic-bezier(0.16,1,0.3,1); pointer-events:none; }
+        /* PORTFOLIO – 2×2 grid fills the section */
+        #portfolio { padding:5rem 4rem 3rem; }
+        .portfolio-grid {
+            display:grid;
+            grid-template-columns:repeat(2,1fr);
+            grid-template-rows:repeat(2,1fr);
+            gap:0.8rem;
+            width:100%;
+            max-width:1100px;
+            flex:1;
+            min-height:0;
+            margin-top:2rem;
+        }
+        #portfolio { display:flex; flex-direction:column; align-items:center; }
+        #portfolio .section-inner--wide { display:flex; flex-direction:column; height:calc(100vh - 8rem); }
+        .pg-card { position:relative; overflow:hidden; cursor:pointer; min-height:0; }
+        .pg-card img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.7s cubic-bezier(0.16,1,0.3,1); pointer-events:none; }
         .pg-card:hover img { transform:scale(1.04); }
         .pg-card-overlay { position:absolute; bottom:0; left:0; right:0; padding:1.2rem 1rem 0.9rem; background:linear-gradient(to top,rgba(8,8,8,0.85),transparent); }
         .pg-card-title { font-family:'Cormorant Garamond',serif; font-size:1rem; font-weight:400; letter-spacing:1px; margin-bottom:0.2rem; }
         .pg-card-sub { font-size:0.65rem; letter-spacing:2px; text-transform:uppercase; color:var(--accent); }
 
         /* KONTAKT */
-        .kontakt-center { text-align:center; }
-        .kontakt-center .section-label { justify-content:center; }
-        .kontakt h2 { font-family:'Cormorant Garamond',serif; font-size:clamp(2.5rem,5vw,4.5rem); font-weight:300; letter-spacing:3px; margin-bottom:1.5rem; line-height:1.05; }
-        .kontakt p { color:var(--grey); font-size:0.9rem; line-height:1.9; margin-bottom:3rem; }
+        #kontakt .section-inner { text-align:center; }
+        #kontakt .section-label { justify-content:center; }
+        .kontakt-h2 { font-family:'Cormorant Garamond',serif; font-size:clamp(2.5rem,5vw,4.5rem); font-weight:300; letter-spacing:3px; margin-bottom:1.5rem; line-height:1.05; }
+        .kontakt-p { color:var(--grey); font-size:0.9rem; line-height:1.9; margin-bottom:3rem; }
         .kontakt-btn { display:inline-block; padding:1.1rem 3rem; border:1px solid var(--accent); color:var(--white); text-decoration:none; font-size:0.75rem; letter-spacing:3px; text-transform:uppercase; position:relative; overflow:hidden; }
         .kontakt-btn::before { content:''; position:absolute; inset:0; background:var(--accent); transform:translateX(-100%); transition:transform 0.4s ease; z-index:-1; }
         .kontakt-btn:hover::before { transform:translateX(0); }
@@ -106,9 +124,9 @@
         .kontakt-footer { margin-top:4rem; padding-top:2rem; border-top:1px solid #1e1e1e; display:flex; justify-content:space-between; }
         .kontakt-footer p { font-size:0.7rem; color:#444; letter-spacing:1px; }
 
-        /* SECTION DOTS (right side) */
-        #section-dots { position:fixed; right:2rem; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:10px; z-index:400; opacity:0; transition:opacity 0.5s ease; }
-        #section-dots.visible { opacity:1; }
+        /* SECTION DOTS */
+        #section-dots { position:fixed; right:2rem; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:10px; z-index:400; opacity:0; transition:opacity 0.5s ease; pointer-events:none; }
+        #section-dots.visible { opacity:1; pointer-events:auto; }
         .sdot { width:5px; height:5px; border-radius:50%; background:rgba(240,237,232,0.25); cursor:pointer; transition:background 0.3s,transform 0.3s; }
         .sdot.active { background:var(--accent); transform:scale(1.4); }
         .sdot:hover { background:rgba(240,237,232,0.6); }
@@ -130,14 +148,14 @@
         @keyframes scrollPulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
 
         @media(max-width:768px){
-            nav{padding:1.5rem}
-            .nav-links{display:none}
-            .section-inner{padding:0 1.5rem}
-            .om-meg-grid{grid-template-columns:1fr;gap:2rem}
-            .tjeneste-item{grid-template-columns:1fr;gap:1rem}
-            .portfolio-grid{grid-template-columns:1fr}
-            #lightbox-img-wrap{padding:0 3rem}
-            #section-dots{right:1rem}
+            nav { padding:1.5rem; }
+            .nav-links { display:none; }
+            .section-inner { padding:0 1.5rem; }
+            .om-meg-grid { grid-template-columns:1fr; gap:2rem; }
+            .tjeneste-item { grid-template-columns:1fr; gap:1rem; }
+            .portfolio-grid { grid-template-columns:1fr; grid-template-rows:repeat(4,1fr); }
+            #lightbox-img-wrap { padding:0 3rem; }
+            #section-dots { right:1rem; }
         }
     </style>
 </head>
@@ -146,7 +164,6 @@
 <div class="cursor" id="cursor"></div>
 <div class="cursor-ring" id="cursorRing"></div>
 
-<!-- INTRO -->
 <div id="intro"></div>
 <div id="intro-title">Berg Boligfoto</div>
 <div id="intro-house">
@@ -176,9 +193,9 @@
     <div id="scroll-hint"><span>Scroll</span><div class="scroll-line"></div></div>
 </div>
 
+<!-- Main content – moved into view via CSS transform, never via window.scroll -->
 <div id="main-content">
 
-    <!-- OM MEG -->
     <section id="om-meg">
         <div class="section-inner">
             <div class="section-label">Om Meg</div>
@@ -193,7 +210,6 @@
         </div>
     </section>
 
-    <!-- TJENESTER -->
     <section id="tjenester">
         <div class="section-inner">
             <div class="section-label">Tjenester</div>
@@ -207,7 +223,6 @@
         </div>
     </section>
 
-    <!-- PORTEFØLJE -->
     <section id="portfolio">
         <div class="section-inner section-inner--wide">
             <div class="section-label">Portefølje</div>
@@ -215,12 +230,11 @@
         </div>
     </section>
 
-    <!-- KONTAKT -->
     <section id="kontakt">
-        <div class="section-inner kontakt-center">
+        <div class="section-inner">
             <div class="section-label" style="justify-content:center">Kontakt</div>
-            <h2 class="kontakt">La oss skape<br>noe bra sammen</h2>
-            <p class="kontakt">Ta kontakt for pristilbud eller spørsmål. Jeg dekker Levanger og omkringliggende kommuner.</p>
+            <h2 class="kontakt-h2">La oss skape<br>noe bra sammen</h2>
+            <p class="kontakt-p">Ta kontakt for pristilbud eller spørsmål. Jeg dekker Levanger og omkringliggende kommuner.</p>
             <a href="mailto:hei@bergboligfoto.no" class="kontakt-btn">Send en melding</a>
             <div class="kontakt-footer">
                 <p>© 2025 Berg Boligfoto</p>
@@ -231,15 +245,15 @@
 
 </div>
 
-<!-- SECTION DOTS -->
+<!-- Section indicator dots -->
 <div id="section-dots">
-    <div class="sdot" data-idx="0" title="Om Meg"></div>
-    <div class="sdot" data-idx="1" title="Tjenester"></div>
-    <div class="sdot" data-idx="2" title="Portefølje"></div>
-    <div class="sdot" data-idx="3" title="Kontakt"></div>
+    <div class="sdot" data-idx="0"></div>
+    <div class="sdot" data-idx="1"></div>
+    <div class="sdot" data-idx="2"></div>
+    <div class="sdot" data-idx="3"></div>
 </div>
 
-<!-- LIGHTBOX -->
+<!-- Lightbox -->
 <div id="lightbox">
     <div id="lightbox-title"></div>
     <button id="lightbox-close">Lukk</button>
@@ -267,7 +281,7 @@ function addHover(el){
 }
 document.querySelectorAll('a,button,.sdot').forEach(addHover);
 
-// ── PORTFOLIO DATA ───────────────────────────────────────────
+// ── PORTFOLIO ────────────────────────────────────────────────
 const projects=[
     { title:'Familievennlig hus i sentrum', sub:'Levanger · 2025',
       cover:'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
@@ -307,14 +321,11 @@ projects.forEach((p,i)=>{
     pgGrid.appendChild(card);
 });
 
-// ── LIGHTBOX (arrows only, no scroll) ────────────────────────
+// ── LIGHTBOX ─────────────────────────────────────────────────
 const lightbox =document.getElementById('lightbox');
 const lbImg    =document.getElementById('lightbox-img');
 const lbTitle  =document.getElementById('lightbox-title');
 const lbCounter=document.getElementById('lightbox-counter');
-const lbPrev   =document.getElementById('lightbox-prev');
-const lbNext   =document.getElementById('lightbox-next');
-const lbClose  =document.getElementById('lightbox-close');
 let lbProj=0,lbIdx=0;
 
 function openLightbox(idx){ lbProj=idx; lbIdx=0; renderLb(0); lightbox.classList.add('open'); }
@@ -329,9 +340,9 @@ function renderLb(dir){
 function lbGoNext(){ lbIdx=(lbIdx+1)%projects[lbProj].images.length; renderLb(1); }
 function lbGoPrev(){ lbIdx=(lbIdx-1+projects[lbProj].images.length)%projects[lbProj].images.length; renderLb(-1); }
 
-lbClose.addEventListener('click',closeLightbox);
-lbNext.addEventListener('click',lbGoNext);
-lbPrev.addEventListener('click',lbGoPrev);
+document.getElementById('lightbox-close').addEventListener('click',closeLightbox);
+document.getElementById('lightbox-next').addEventListener('click',lbGoNext);
+document.getElementById('lightbox-prev').addEventListener('click',lbGoPrev);
 lightbox.addEventListener('click',e=>{ if(e.target===lightbox)closeLightbox(); });
 document.addEventListener('keydown',e=>{
     if(!lightbox.classList.contains('open'))return;
@@ -353,14 +364,14 @@ const mainContent=document.getElementById('main-content');
 const heroBg     =document.getElementById('hero-bg');
 const sectionDots=document.getElementById('section-dots');
 
-// ── INTRO SEQUENCE ───────────────────────────────────────────
+// ── INTRO ────────────────────────────────────────────────────
 setTimeout(()=>{ introTitle.style.transition='opacity 0.9s ease'; introTitle.style.opacity='1'; },150);
 
 setTimeout(()=>{
     introHouse.style.opacity='1';
-    const path=document.getElementById('house-path');
-    path.style.transition='stroke-dashoffset 1.6s cubic-bezier(0.4,0,0.2,1)';
-    path.style.strokeDashoffset='0';
+    const p=document.getElementById('house-path');
+    p.style.transition='stroke-dashoffset 1.6s cubic-bezier(0.4,0,0.2,1)';
+    p.style.strokeDashoffset='0';
 },1400);
 
 setTimeout(()=>{
@@ -390,8 +401,6 @@ setTimeout(()=>{
                 scrollHint.style.opacity   ='1';
                 navContact.classList.add('visible');
                 navLinks.classList.add('visible');
-                // Make sections visible (they fade in on first view)
-                document.querySelectorAll('#main-content section').forEach(s=>s.classList.add('visible'));
             },800);
         },500);
     },1000);
@@ -402,65 +411,73 @@ const VH=window.innerHeight;
 let accumulated=0;
 let heroLocked=true;
 
-// Smooth scroll
-let smTarget=0, smCurrent=0;
-let isProg=false;
+// Transform-based smooth scroll (NO window.scrollTo needed)
+let cT=0;   // currentTranslate (px)
+let tT=0;   // targetTranslate  (px)
+
+// tT for section idx: sections are stacked, each VH tall.
+// main-content starts at translateY(100vh) = 1*VH.
+// Section 0 (Om Meg) is at position 0 within main-content.
+// To show section 0: translateY(0)   → main-content top at 0 → Om Meg visible
+// To show section 1: translateY(-VH) → Tjenester visible
+// Wait – main-content starts at translateY(100vh) in CSS.
+// To show Om Meg: set translateY(0px) [overriding CSS 100vh]
+// To show Tjenester: translateY(-100vh)
+// General: translateY(-(idx * VH)px)
+// But CSS has `transform: translateY(100vh)` as default.
+// We'll control all transforms from JS, overriding the CSS default.
+
+// When hero is showing: cT=tT=VH (main-content at 100vh below, i.e. hidden)
+cT=VH; tT=VH;
+mainContent.style.transform=`translateY(${VH}px)`;
 
 (function smoothLoop(){
-    const diff=smTarget-smCurrent;
+    const diff=tT-cT;
     if(Math.abs(diff)>0.1){
-        smCurrent+=diff*0.1;
-        isProg=true;
-        window.scrollTo(0,smCurrent);
-        isProg=false;
+        cT+=diff*0.1;
+        mainContent.style.transform=`translateY(${cT}px)`;
     }
     requestAnimationFrame(smoothLoop);
 })();
 
 // ── SECTION SNAPPING ─────────────────────────────────────────
-const SECTION_IDS=['om-meg','tjenester','portfolio','kontakt'];
-let sectionPos=[];     // filled after intro
+const NUM_SECTIONS=4;
 let currentSec=0;
 let isSnapping=false;
-let wheelDelta=0;
-let wheelTimer=null;
+let wheelDelta=0, wheelTimer=null;
 
-function computeSections(){
-    sectionPos=SECTION_IDS.map(id=>{
-        const el=document.getElementById(id);
-        return el ? Math.round(el.getBoundingClientRect().top+window.scrollY) : 0;
-    });
-}
+// tT for showing section idx:
+// Hero hidden: cT=VH (translateY(VH) → main-content pushed below viewport)
+// Om Meg (idx=0): translateY(0)
+// Tjenester (idx=1): translateY(-VH)
+// Portfolio (idx=2): translateY(-2*VH)
+// Kontakt (idx=3): translateY(-3*VH)
+function sectionTarget(idx){ return -idx*VH; }
 
 function snapTo(idx){
-    if(idx<0||idx>=SECTION_IDS.length)return;
+    if(idx<0||idx>=NUM_SECTIONS)return;
     currentSec=idx;
-    smTarget=sectionPos[idx];
+    tT=sectionTarget(idx);
     isSnapping=true;
     updateDots();
     setTimeout(()=>{ isSnapping=false; },800);
 }
 
 function updateDots(){
-    document.querySelectorAll('.sdot').forEach((d,i)=>{
-        d.classList.toggle('active',i===currentSec);
-    });
+    document.querySelectorAll('.sdot').forEach((d,i)=>d.classList.toggle('active',i===currentSec));
 }
 
-function showDots(){
-    computeSections();
-    sectionDots.classList.add('visible');
-    updateDots();
-}
-
+function showDots(){ sectionDots.classList.add('visible'); updateDots(); }
 function hideDots(){ sectionDots.classList.remove('visible'); }
 
 // Dot clicks
 document.querySelectorAll('.sdot').forEach((d,i)=>{
     d.addEventListener('click',()=>{
-        if(heroLocked){ heroLocked=false; accumulated=VH; setHeroProgress(1); smTarget=0; smCurrent=0; }
-        setTimeout(()=>snapTo(i),heroLocked?0:50);
-        if(!sectionDots.classList.contains('visible'))showDots();
+        if(heroLocked){
+            heroLocked=false; accumulated=VH; setHeroProgress(1);
+            showDots();
+        }
+        snapTo(i);
     });
 });
 
@@ -486,98 +503,87 @@ document.addEventListener('wheel',e=>{
         setHeroProgress(accumulated/VH);
         if(accumulated>=VH){
             heroLocked=false;
-            smTarget=0; smCurrent=0;
             showDots();
-            snapTo(0);
+            snapTo(0); // smooth slide to Om Meg
         }
         return;
     }
 
-    // SECTION SNAPPING PHASE
+    // SECTION PHASE – accumulate wheel delta for trackpad support
     if(isSnapping)return;
-
-    // Accumulate wheel delta (handles trackpads with small increments)
     wheelDelta+=e.deltaY;
     clearTimeout(wheelTimer);
     wheelTimer=setTimeout(()=>{ wheelDelta=0; },200);
-    if(Math.abs(wheelDelta)<50)return;
+    if(Math.abs(wheelDelta)<40)return;
 
     const dir=wheelDelta>0?1:-1;
     wheelDelta=0;
 
     if(dir>0){
-        // Scroll down
-        if(currentSec<SECTION_IDS.length-1){
-            snapTo(currentSec+1);
-        }
+        // Down: next section
+        if(currentSec<NUM_SECTIONS-1) snapTo(currentSec+1);
     } else {
-        // Scroll up
+        // Up: previous section or back to hero
         if(currentSec>0){
             snapTo(currentSec-1);
         } else {
-            // Back to hero
+            // Back to hero: slide main-content back down, re-lock hero
             heroLocked=true;
             accumulated=VH;
-            setHeroProgress(1);
-            smTarget=0; smCurrent=0;
+            setHeroProgress(1); // hero bg still showing
+            tT=VH; // slide main-content back below viewport
             hideDots();
         }
     }
 },{passive:false,capture:true});
 
-// Scrollbar sync
-window.addEventListener('scroll',()=>{
-    if(isProg)return;
-    if(!heroLocked && window.scrollY===0){
-        heroLocked=true; accumulated=VH; setHeroProgress(1);
-        smTarget=0; smCurrent=0; hideDots();
-    }
-});
-
 // Touch support
-let tY0=0;
-window.addEventListener('touchstart',e=>{ tY0=e.touches[0].clientY; },{passive:true});
+let tY0=0, tMoved=false;
+window.addEventListener('touchstart',e=>{ tY0=e.touches[0].clientY; tMoved=false; },{passive:true});
 window.addEventListener('touchmove',e=>{
     if(lightbox.classList.contains('open'))return;
     e.preventDefault();
-    const d=tY0-e.touches[0].clientY; tY0=e.touches[0].clientY;
+    const d=tY0-e.touches[0].clientY;
+    if(!tMoved&&Math.abs(d)<10)return;
+    tMoved=true; tY0=e.touches[0].clientY;
+
     if(heroLocked){
         accumulated=Math.max(0,Math.min(accumulated+d,VH));
         setHeroProgress(accumulated/VH);
-        if(accumulated>=VH){ heroLocked=false; smTarget=0; smCurrent=0; showDots(); snapTo(0); }
-    } else {
-        if(isSnapping)return;
-        if(Math.abs(d)<8)return;
-        if(d>0 && currentSec<SECTION_IDS.length-1) snapTo(currentSec+1);
-        else if(d<0 && currentSec>0) snapTo(currentSec-1);
-        else if(d<0 && currentSec===0){ heroLocked=true; accumulated=VH; setHeroProgress(1); smTarget=0; smCurrent=0; hideDots(); }
+        if(accumulated>=VH){ heroLocked=false; showDots(); snapTo(0); }
+        return;
+    }
+    if(isSnapping)return;
+    if(Math.abs(d)<15)return;
+    if(d>0){ if(currentSec<NUM_SECTIONS-1)snapTo(currentSec+1); }
+    else    {
+        if(currentSec>0)snapTo(currentSec-1);
+        else { heroLocked=true; accumulated=VH; setHeroProgress(1); tT=VH; hideDots(); }
     }
 },{passive:false});
 
 // ── NAV LINKS ─────────────────────────────────────────────────
-document.querySelectorAll('.nav-links a, .nav-contact').forEach(a=>{
+const SECTION_IDS=['om-meg','tjenester','portfolio','kontakt'];
+document.querySelectorAll('.nav-links a,.nav-contact').forEach(a=>{
     a.addEventListener('click',e=>{
-        const id=a.getAttribute('href');
-        if(!id||!id.startsWith('#'))return;
-        const sectionId=id.slice(1);
-        if(!sectionId)return;
+        const href=a.getAttribute('href');
+        if(!href||!href.startsWith('#'))return;
+        const id=href.slice(1);
+        const idx=SECTION_IDS.indexOf(id);
+        if(idx<0)return;
         e.preventDefault();
-        if(heroLocked){ heroLocked=false; accumulated=VH; setHeroProgress(1); smTarget=0; smCurrent=0; }
-        const idx=SECTION_IDS.indexOf(sectionId);
-        if(idx>=0){
-            if(!sectionDots.classList.contains('visible'))showDots();
-            setTimeout(()=>snapTo(idx),50);
-        }
+        if(heroLocked){ heroLocked=false; accumulated=VH; setHeroProgress(1); }
+        showDots();
+        snapTo(idx);
     });
 });
 
-// Nav logo scrolls back to hero
 document.getElementById('nav-logo').addEventListener('click',e=>{
     e.preventDefault();
     if(!heroLocked){
         heroLocked=true; accumulated=0; setHeroProgress(0);
-        smTarget=0; smCurrent=0;
-        window.scrollTo(0,0);
+        tT=VH; cT=VH;
+        mainContent.style.transform=`translateY(${VH}px)`;
         hideDots();
     }
 });
