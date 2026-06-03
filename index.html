@@ -6,709 +6,473 @@
     <title>Berg Boligfoto</title>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --black: #080808;
-            --white: #f0ede8;
-            --grey: #bbb;
-            --accent: #e8d8c0;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { height: 100%; }
-        body {
-            background: var(--black);
-            color: var(--white);
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 300;
-            cursor: none;
-            overflow: hidden;
-        }
-        body.unlocked { overflow-y: auto; }
+        :root { --black:#080808; --white:#f0ede8; --grey:#bbb; --accent:#e8d8c0; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html,body { height:100%; }
+        body { background:var(--black); color:var(--white); font-family:'Montserrat',sans-serif; font-weight:300; cursor:none; overflow:hidden; }
+        body.unlocked { overflow-y:auto; }
 
         /* CURSOR */
-        .cursor { width: 8px; height: 8px; background: var(--white); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; transition: transform 0.15s ease; }
-        .cursor-ring { width: 32px; height: 32px; border: 1px solid rgba(240,237,232,0.4); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9998; }
+        .cursor { width:8px; height:8px; background:var(--white); border-radius:50%; position:fixed; top:0; left:0; pointer-events:none; z-index:9999; transition:transform 0.15s ease; }
+        .cursor-ring { width:32px; height:32px; border:1px solid rgba(240,237,232,0.4); border-radius:50%; position:fixed; top:0; left:0; pointer-events:none; z-index:9998; }
 
-        /* INTRO OVERLAY */
-        #intro {
-            position: fixed;
-            inset: 0;
-            background: var(--black);
-            z-index: 600;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 3rem;
-            pointer-events: none;
-        }
-        #intro.done { display: none; }
+        /* INTRO OVERLAY — only the black background */
+        #intro { position:fixed; inset:0; background:var(--black); z-index:600; transition:opacity 1.2s ease; pointer-events:none; }
+        #intro.fading { opacity:0; }
+        #intro.gone   { display:none; }
 
+        /* INTRO TITLE — floats above everything, travels to nav */
         #intro-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(3rem, 8vw, 7rem);
-            font-weight: 300;
-            letter-spacing: 8px;
-            text-transform: uppercase;
-            line-height: 1;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeUp 1.2s cubic-bezier(0.16,1,0.3,1) 0.3s forwards;
-            white-space: nowrap;
+            position:fixed; left:50%; top:50%;
+            transform:translate(-50%,-50%);
+            font-family:'Cormorant Garamond',serif;
+            font-size:clamp(3rem,8vw,7rem);
+            font-weight:300; letter-spacing:8px; text-transform:uppercase; white-space:nowrap;
+            z-index:700; opacity:0; pointer-events:none;
         }
 
-        #intro-house {
-            opacity: 0;
-            animation: fadeIn 0.5s ease 1.6s forwards;
-            transition: opacity 0.6s ease;
-        }
-        #intro-house.hide { opacity: 0 !important; }
-
-        #house-path {
-            stroke-dasharray: 300;
-            stroke-dashoffset: 300;
-            animation: drawHouse 1.8s ease 1.9s forwards;
-        }
+        /* INTRO HOUSE */
+        #intro-house { position:fixed; left:50%; top:50%; transform:translate(-50%,70px); z-index:700; opacity:0; transition:opacity 0.7s ease; pointer-events:none; }
+        #house-path  { stroke-dasharray:300; stroke-dashoffset:300; }
 
         /* NAV */
-        nav {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            z-index: 700;
-            padding: 2rem 3rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        /* The logo starts hidden; JS animates it in after intro */
-        #nav-logo {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.3rem;
-            font-weight: 400;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: var(--white);
-            text-decoration: none;
-            opacity: 0;
-            transition: opacity 0.6s ease;
-        }
-        #nav-logo.visible { opacity: 1; }
-
-        .nav-contact {
-            display: inline-block;
-            padding: 0.6rem 1.6rem;
-            border: 1px solid rgba(240,237,232,0.5);
-            color: var(--white);
-            text-decoration: none;
-            font-size: 0.7rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            opacity: 0;
-            transition: opacity 0.8s ease, background 0.3s ease, color 0.3s ease;
-        }
-        .nav-contact.visible { opacity: 1; }
-        .nav-contact:hover { background: var(--white); color: var(--black); }
+        nav { position:fixed; top:0; left:0; right:0; z-index:500; padding:2rem 3rem; display:flex; justify-content:space-between; align-items:center; }
+        #nav-logo { font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:400; letter-spacing:4px; text-transform:uppercase; color:var(--white); text-decoration:none; opacity:0; visibility:hidden; transition:opacity 0.7s ease; }
+        #nav-logo.visible { opacity:1; visibility:visible; }
+        .nav-contact { display:inline-block; padding:0.6rem 1.6rem; border:1px solid rgba(240,237,232,0.5); color:var(--white); text-decoration:none; font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; opacity:0; transition:opacity 0.8s ease,background 0.3s ease,color 0.3s ease; }
+        .nav-contact.visible { opacity:1; }
+        .nav-contact:hover { background:var(--white); color:var(--black); }
 
         /* HERO */
-        #hero {
-            position: fixed;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1;
-        }
-        #hero-bg {
-            position: absolute;
-            inset: 0;
-            background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1800&q=80');
-            background-size: cover;
-            background-position: center;
-            opacity: 0;
-            transition: opacity 1.2s ease, transform 1.2s ease;
-        }
-        .hero-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to bottom, rgba(8,8,8,0.2), rgba(8,8,8,0.55));
-            pointer-events: none;
-        }
-
-        #hero-text {
-            position: relative;
-            text-align: center;
-            z-index: 2;
-            opacity: 0;
-            transition: opacity 1s ease;
-        }
-        #hero-text.visible { opacity: 1; }
-        #hero-text h1 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(3rem, 8vw, 7rem);
-            font-weight: 300;
-            letter-spacing: 8px;
-            text-transform: uppercase;
-            line-height: 1;
-            margin-bottom: 1rem;
-        }
-        #hero-text p {
-            font-size: 0.85rem;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: var(--accent);
-        }
-
-        #scroll-hint {
-            position: absolute;
-            bottom: 2.5rem;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            z-index: 2;
-            opacity: 0;
-            transition: opacity 0.8s ease;
-        }
-        #scroll-hint.visible { opacity: 1; }
-        #scroll-hint span { font-size: 0.6rem; letter-spacing: 3px; text-transform: uppercase; color: var(--grey); }
-        .scroll-line { width: 1px; height: 40px; background: linear-gradient(to bottom, var(--accent), transparent); animation: scrollPulse 2s ease infinite; }
+        #hero { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:1; }
+        #hero-bg { position:absolute; inset:0; background-image:url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1800&q=80'); background-size:cover; background-position:center; opacity:0; transform:scale(1.04); }
+        .hero-overlay { position:absolute; inset:0; background:linear-gradient(to bottom,rgba(8,8,8,0.2),rgba(8,8,8,0.55)); pointer-events:none; }
+        #hero-text { position:relative; text-align:center; z-index:2; opacity:0; pointer-events:none; }
+        #hero-text h1 { font-family:'Cormorant Garamond',serif; font-size:clamp(3rem,8vw,7rem); font-weight:300; letter-spacing:8px; text-transform:uppercase; line-height:1; margin-bottom:1rem; }
+        #hero-text p  { font-size:0.85rem; letter-spacing:4px; text-transform:uppercase; color:var(--accent); }
+        #scroll-hint  { position:absolute; bottom:2.5rem; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:0.5rem; z-index:2; opacity:0; pointer-events:none; }
+        #scroll-hint span { font-size:0.6rem; letter-spacing:3px; text-transform:uppercase; color:var(--grey); }
+        .scroll-line { width:1px; height:40px; background:linear-gradient(to bottom,var(--accent),transparent); animation:scrollPulse 2s ease infinite; }
 
         /* MAIN CONTENT */
-        #main-content {
-            position: relative;
-            z-index: 2;
-            margin-top: 100vh;
-            background: var(--black);
-            opacity: 0;
-            transition: opacity 0.8s ease;
-        }
-        #main-content.visible { opacity: 1; }
+        #main-content { position:relative; z-index:2; margin-top:100vh; background:var(--black); opacity:0; transition:opacity 0.8s ease; }
+        #main-content.visible { opacity:1; }
 
         /* TJENESTER */
-        .tjenester { padding: 8rem 3rem; max-width: 1000px; margin: 0 auto; }
-        .section-label { font-size: 0.75rem; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); margin-bottom: 3rem; display: flex; align-items: center; gap: 1rem; }
-        .section-label::after { content: ''; display: block; height: 1px; width: 60px; background: var(--accent); opacity: 0.5; }
-        .tjeneste-item { padding: 3rem 0; border-top: 1px solid #2a2a2a; display: grid; grid-template-columns: 1fr 2fr; gap: 3rem; align-items: start; opacity: 0; transform: translateY(20px); transition: opacity 0.7s ease, transform 0.7s ease; }
-        .tjeneste-item.visible { opacity: 1; transform: translateY(0); }
-        .tjeneste-num { font-family: 'Cormorant Garamond', serif; font-size: 4rem; color: #777; line-height: 1; }
-        .tjeneste-content h3 { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 400; margin-bottom: 1rem; letter-spacing: 1px; }
-        .tjeneste-content p { color: var(--grey); line-height: 1.9; font-size: 0.95rem; }
+        .tjenester { padding:8rem 3rem; max-width:1000px; margin:0 auto; }
+        .section-label { font-size:0.75rem; letter-spacing:4px; text-transform:uppercase; color:var(--accent); margin-bottom:3rem; display:flex; align-items:center; gap:1rem; }
+        .section-label::after { content:''; display:block; height:1px; width:60px; background:var(--accent); opacity:0.5; }
+        .tjeneste-item { padding:3rem 0; border-top:1px solid #2a2a2a; display:grid; grid-template-columns:1fr 2fr; gap:3rem; align-items:start; opacity:0; transform:translateY(20px); transition:opacity 0.7s ease,transform 0.7s ease; }
+        .tjeneste-item.visible { opacity:1; transform:translateY(0); }
+        .tjeneste-num { font-family:'Cormorant Garamond',serif; font-size:4rem; color:#777; line-height:1; }
+        .tjeneste-content h3 { font-family:'Cormorant Garamond',serif; font-size:2.2rem; font-weight:400; margin-bottom:1rem; letter-spacing:1px; }
+        .tjeneste-content p { color:var(--grey); line-height:1.9; font-size:0.95rem; }
 
         /* PORTFOLIO */
-        .portfolio { padding: 8rem 3rem; border-top: 1px solid #2a2a2a; }
-        .portfolio-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1.5rem;
-            margin-top: 3rem;
-        }
-        .portfolio-card {
-            position: relative;
-            overflow: hidden;
-            cursor: none;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.7s ease, transform 0.7s ease;
-        }
-        .portfolio-card.visible { opacity: 1; transform: translateY(0); }
-        .portfolio-card img {
-            width: 100%;
-            aspect-ratio: 4/3;
-            object-fit: cover;
-            display: block;
-            transition: transform 0.7s cubic-bezier(0.16,1,0.3,1);
-        }
-        .portfolio-card:hover img { transform: scale(1.04); }
-        .portfolio-card-overlay {
-            position: absolute;
-            bottom: 0; left: 0; right: 0;
-            padding: 2rem 1.5rem 1.5rem;
-            background: linear-gradient(to top, rgba(8,8,8,0.85), transparent);
-            transform: translateY(8px);
-            transition: transform 0.4s ease;
-        }
-        .portfolio-card:hover .portfolio-card-overlay { transform: translateY(0); }
-        .portfolio-card-title { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 400; letter-spacing: 1px; margin-bottom: 0.3rem; }
-        .portfolio-card-sub { font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); }
-        .portfolio-card-btn {
-            position: absolute;
-            top: 1rem; right: 1rem;
-            width: 36px; height: 36px;
-            border: 1px solid rgba(240,237,232,0.5);
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s ease, background 0.3s ease;
-        }
-        .portfolio-card:hover .portfolio-card-btn { opacity: 1; }
-        .portfolio-card-btn:hover { background: var(--white); }
-        .portfolio-card-btn svg { stroke: var(--white); transition: stroke 0.3s ease; }
-        .portfolio-card-btn:hover svg { stroke: var(--black); }
+        .portfolio { padding:8rem 0 8rem 3rem; border-top:1px solid #2a2a2a; overflow:hidden; }
+        .portfolio .section-label { padding-right:3rem; }
+        .portfolio-track-wrap { overflow-x:auto; overflow-y:hidden; cursor:grab; scrollbar-width:none; -ms-overflow-style:none; }
+        .portfolio-track-wrap::-webkit-scrollbar { display:none; }
+        .portfolio-track-wrap.grabbing { cursor:grabbing; user-select:none; }
+        .portfolio-track { display:flex; gap:1.5rem; width:max-content; padding-right:3rem; }
 
-        /* LIGHTBOX */
-        #lightbox {
-            position: fixed;
-            inset: 0;
-            background: rgba(8,8,8,0.97);
-            z-index: 800;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        #lightbox.open { display: flex; }
+        .portfolio-card { width:420px; flex-shrink:0; opacity:0; transform:translateX(30px); transition:opacity 0.6s ease,transform 0.6s ease; }
+        .portfolio-card.visible { opacity:1; transform:translateX(0); }
 
-        #lightbox-close {
-            position: absolute;
-            top: 2rem; right: 2.5rem;
-            background: none;
-            border: none;
-            color: var(--white);
-            font-size: 0.7rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            cursor: none;
-            opacity: 0.6;
-            transition: opacity 0.3s;
-            font-family: 'Montserrat', sans-serif;
-        }
-        #lightbox-close:hover { opacity: 1; }
+        /* Card slider */
+        .card-slider { position:relative; width:100%; aspect-ratio:4/3; overflow:hidden; background:#111; }
+        .card-slide   { position:absolute; inset:0; opacity:0; transition:opacity 0.5s ease; pointer-events:none; }
+        .card-slide.active { opacity:1; pointer-events:auto; }
+        .card-slide img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.8s cubic-bezier(0.16,1,0.3,1); pointer-events:none; }
+        .portfolio-card:hover .card-slide.active img { transform:scale(1.04); }
 
-        #lightbox-title {
-            position: absolute;
-            top: 2rem; left: 2.5rem;
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.4rem;
-            font-weight: 400;
-            letter-spacing: 2px;
-        }
+        .card-arrow { position:absolute; top:50%; transform:translateY(-50%); background:rgba(8,8,8,0.55); border:1px solid rgba(240,237,232,0.25); color:var(--white); width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; z-index:3; cursor:none; opacity:0; transition:opacity 0.3s,background 0.3s; }
+        .card-slider:hover .card-arrow { opacity:1; }
+        .card-arrow:hover { background:rgba(240,237,232,0.15); }
+        .card-arrow.prev { left:0.75rem; }
+        .card-arrow.next { right:0.75rem; }
 
-        #lightbox-img-wrap {
-            width: 100%;
-            max-width: 900px;
-            padding: 0 4rem;
-            position: relative;
-        }
-        #lightbox-img {
-            width: 100%;
-            max-height: 70vh;
-            object-fit: contain;
-            display: block;
-            transition: opacity 0.4s ease;
-        }
-        #lightbox-img.fade { opacity: 0; }
+        .card-dots { position:absolute; bottom:0.75rem; left:50%; transform:translateX(-50%); display:flex; gap:5px; z-index:3; }
+        .card-dot { width:5px; height:5px; border-radius:50%; background:rgba(240,237,232,0.35); transition:background 0.3s,transform 0.3s; }
+        .card-dot.active { background:var(--white); transform:scale(1.2); }
 
-        #lightbox-prev, #lightbox-next {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: 1px solid rgba(240,237,232,0.3);
-            color: var(--white);
-            width: 44px; height: 44px;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            cursor: none;
-            transition: background 0.3s ease, border-color 0.3s ease;
-        }
-        #lightbox-prev { left: 0; }
-        #lightbox-next { right: 0; }
-        #lightbox-prev:hover, #lightbox-next:hover { background: rgba(240,237,232,0.1); border-color: var(--accent); }
-
-        #lightbox-counter {
-            margin-top: 1.5rem;
-            font-size: 0.7rem;
-            letter-spacing: 3px;
-            color: var(--grey);
-        }
+        .card-info { padding:1.2rem 0 0; }
+        .card-title { font-family:'Cormorant Garamond',serif; font-size:1.4rem; font-weight:400; letter-spacing:1px; margin-bottom:0.3rem; }
+        .card-sub   { font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; color:var(--accent); }
 
         /* KONTAKT */
-        .kontakt { padding: 8rem 3rem; text-align: center; border-top: 1px solid #2a2a2a; }
-        .kontakt-inner { max-width: 600px; margin: 0 auto; }
-        .kontakt h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 300; letter-spacing: 3px; margin-bottom: 1.5rem; line-height: 1.1; }
-        .kontakt p { color: var(--grey); font-size: 0.95rem; line-height: 1.9; margin-bottom: 3rem; }
-        .kontakt-btn { display: inline-block; padding: 1.1rem 3rem; border: 1px solid var(--accent); color: var(--white); text-decoration: none; font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase; position: relative; overflow: hidden; }
-        .kontakt-btn::before { content: ''; position: absolute; inset: 0; background: var(--accent); transform: translateX(-100%); transition: transform 0.4s ease; z-index: -1; }
-        .kontakt-btn:hover::before { transform: translateX(0); }
-        .kontakt-btn:hover { color: var(--black); }
+        .kontakt { padding:8rem 3rem; text-align:center; border-top:1px solid #2a2a2a; }
+        .kontakt-inner { max-width:600px; margin:0 auto; }
+        .kontakt h2 { font-family:'Cormorant Garamond',serif; font-size:clamp(2.5rem,5vw,4rem); font-weight:300; letter-spacing:3px; margin-bottom:1.5rem; line-height:1.1; }
+        .kontakt p  { color:var(--grey); font-size:0.95rem; line-height:1.9; margin-bottom:3rem; }
+        .kontakt-btn { display:inline-block; padding:1.1rem 3rem; border:1px solid var(--accent); color:var(--white); text-decoration:none; font-size:0.75rem; letter-spacing:3px; text-transform:uppercase; position:relative; overflow:hidden; }
+        .kontakt-btn::before { content:''; position:absolute; inset:0; background:var(--accent); transform:translateX(-100%); transition:transform 0.4s ease; z-index:-1; }
+        .kontakt-btn:hover::before { transform:translateX(0); }
+        .kontakt-btn:hover { color:var(--black); }
 
-        footer { padding: 2rem 3rem; border-top: 1px solid #2a2a2a; display: flex; justify-content: space-between; align-items: center; }
-        footer p { font-size: 0.75rem; color: #666; letter-spacing: 1px; }
+        footer { padding:2rem 3rem; border-top:1px solid #2a2a2a; display:flex; justify-content:space-between; align-items:center; }
+        footer p { font-size:0.75rem; color:#666; letter-spacing:1px; }
 
-        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeIn { to { opacity: 1; } }
-        @keyframes drawHouse { to { stroke-dashoffset: 0; } }
-        @keyframes scrollPulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+        @keyframes scrollPulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
 
-        @media (max-width: 768px) {
-            nav { padding: 1.5rem; }
-            .portfolio-grid { grid-template-columns: 1fr; }
-            .tjeneste-item { grid-template-columns: 1fr; gap: 1rem; }
-            .tjenester, .portfolio, .kontakt { padding: 5rem 1.5rem; }
-            footer { flex-direction: column; gap: 1rem; text-align: center; }
-            #lightbox-img-wrap { padding: 0 3rem; }
+        @media(max-width:768px){
+            nav{padding:1.5rem}
+            .portfolio-card{width:300px}
+            .tjeneste-item{grid-template-columns:1fr;gap:1rem}
+            .tjenester,.kontakt{padding:5rem 1.5rem}
+            .portfolio{padding:5rem 0 5rem 1.5rem}
+            footer{flex-direction:column;gap:1rem;text-align:center}
         }
     </style>
 </head>
 <body>
 
-    <div class="cursor" id="cursor"></div>
-    <div class="cursor-ring" id="cursorRing"></div>
+<div class="cursor"      id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
 
-    <!-- INTRO -->
-    <div id="intro">
-        <div id="intro-title">Berg Boligfoto</div>
-        <div id="intro-house">
-            <svg width="80" height="70" viewBox="0 0 80 70" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path id="house-path"
-                    d="M40 5 L75 35 L65 35 L65 65 L45 65 L45 48 L35 48 L35 65 L15 65 L15 35 L5 35 Z"
-                    stroke="#e8d8c0" stroke-width="1.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
-            </svg>
-        </div>
+<!-- INTRO: solid black overlay -->
+<div id="intro"></div>
+
+<!-- FLOATING TITLE — the only Berg Boligfoto on screen during intro -->
+<div id="intro-title">Berg Boligfoto</div>
+
+<!-- FLOATING HOUSE -->
+<div id="intro-house">
+    <svg width="80" height="70" viewBox="0 0 80 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path id="house-path"
+              d="M40 5 L75 35 L65 35 L65 65 L45 65 L45 48 L35 48 L35 65 L15 65 L15 35 L5 35 Z"
+              stroke="#e8d8c0" stroke-width="1.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+    </svg>
+</div>
+
+<nav>
+    <a href="#" id="nav-logo">Berg Boligfoto</a>
+    <a href="#kontakt" class="nav-contact" id="navContact">Kontakt</a>
+</nav>
+
+<div id="hero">
+    <div id="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div id="hero-text">
+        <h1>Berg Boligfoto</h1>
+        <p>Eiendomsfotografi · Levanger & omegn</p>
     </div>
-
-    <!-- NAV -->
-    <nav>
-        <a href="#" id="nav-logo">Berg Boligfoto</a>
-        <a href="#kontakt" class="nav-contact" id="navContact">Kontakt</a>
-    </nav>
-
-    <!-- HERO -->
-    <div id="hero">
-        <div id="hero-bg"></div>
-        <div class="hero-overlay"></div>
-        <div id="hero-text">
-            <h1>Berg Boligfoto</h1>
-            <p>Eiendomsfotografi · Levanger & omegn</p>
-        </div>
-        <div id="scroll-hint">
-            <span>Scroll</span>
-            <div class="scroll-line"></div>
-        </div>
+    <div id="scroll-hint">
+        <span>Scroll</span>
+        <div class="scroll-line"></div>
     </div>
+</div>
 
-    <!-- MAIN -->
-    <div id="main-content">
-        <section class="tjenester">
-            <div class="section-label">Tjenester</div>
-            <div class="tjeneste-item">
-                <div class="tjeneste-num">01</div>
-                <div class="tjeneste-content">
-                    <h3>Boligfotografi</h3>
-                    <p>Profesjonelle bilder som fremhever boligens beste sider. Med riktig lys, komposisjon og etterbehandling presenteres boligen på sitt beste – og skaper en sterkere første inntrykk hos potensielle kjøpere.</p>
-                </div>
+<div id="main-content">
+    <section class="tjenester">
+        <div class="section-label">Tjenester</div>
+        <div class="tjeneste-item">
+            <div class="tjeneste-num">01</div>
+            <div class="tjeneste-content">
+                <h3>Boligfotografi</h3>
+                <p>Profesjonelle bilder som fremhever boligens beste sider. Med riktig lys, komposisjon og etterbehandling presenteres boligen på sitt beste – og skaper en sterkere første inntrykk hos potensielle kjøpere.</p>
             </div>
-        </section>
-
-        <section class="portfolio" id="portfolio">
-            <div class="section-label">Portefølje</div>
-            <div class="portfolio-grid" id="portfolioGrid"></div>
-        </section>
-
-        <section class="kontakt" id="kontakt">
-            <div class="kontakt-inner">
-                <div class="section-label" style="justify-content:center">Kontakt</div>
-                <h2>La oss skape noe bra sammen</h2>
-                <p>Ta kontakt for pristilbud eller spørsmål. Jeg dekker Levanger og omkringliggende kommuner.</p>
-                <a href="mailto:hei@bergboligfoto.no" class="kontakt-btn">Send en melding</a>
-            </div>
-        </section>
-
-        <footer>
-            <p>© 2025 Berg Boligfoto</p>
-            <p>Levanger, Trøndelag</p>
-        </footer>
-    </div>
-
-    <!-- LIGHTBOX -->
-    <div id="lightbox">
-        <div id="lightbox-title"></div>
-        <button id="lightbox-close">Lukk</button>
-        <div id="lightbox-img-wrap">
-            <button id="lightbox-prev">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15,18 9,12 15,6"/></svg>
-            </button>
-            <img id="lightbox-img" src="" alt="">
-            <button id="lightbox-next">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9,6 15,12 9,18"/></svg>
-            </button>
         </div>
-        <div id="lightbox-counter"></div>
-    </div>
+    </section>
 
-    <script>
-    // ─── CURSOR ───────────────────────────────────────────────
-    const cursor = document.getElementById('cursor');
-    const ring   = document.getElementById('cursorRing');
-    let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
-    document.addEventListener('mousemove', e => {
-        mouseX = e.clientX; mouseY = e.clientY;
-        cursor.style.left = mouseX - 4 + 'px';
-        cursor.style.top  = mouseY - 4 + 'px';
-    });
-    (function animateRing() {
-        ringX += (mouseX - ringX - 16) * 0.12;
-        ringY += (mouseY - ringY - 16) * 0.12;
-        ring.style.left = ringX + 'px';
-        ring.style.top  = ringY + 'px';
-        requestAnimationFrame(animateRing);
-    })();
-    document.querySelectorAll('a, button, .portfolio-card').forEach(el => {
-        el.addEventListener('mouseenter', () => cursor.style.transform = 'scale(3)');
-        el.addEventListener('mouseleave', () => cursor.style.transform = 'scale(1)');
-    });
+    <section class="portfolio" id="portfolio">
+        <div class="section-label">Portefølje</div>
+        <div class="portfolio-track-wrap" id="portfolioWrap">
+            <div class="portfolio-track" id="portfolioTrack"></div>
+        </div>
+    </section>
 
-    // ─── PORTFOLIO DATA ───────────────────────────────────────
-    const projects = [
-        {
-            title: 'Familievennlig hus i sentrum',
-            sub: 'Levanger · 2025',
-            cover: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
-            images: [
-                'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1200&q=80',
-                'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=1200&q=80',
-                'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1200&q=80',
-                'https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=1200&q=80',
-            ]
-        },
-        {
-            title: 'Praktfull leilighet med utsikt',
-            sub: 'Verdal · 2025',
-            cover: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80',
-            images: [
-                'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&q=80',
-                'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=1200&q=80',
-                'https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?w=1200&q=80',
-            ]
-        },
-        {
-            title: 'Naturrik hytte ved fjorden',
-            sub: 'Inderøy · 2025',
-            cover: 'https://images.unsplash.com/photo-1542718610-a1d656d1884c?w=800&q=80',
-            images: [
-                'https://images.unsplash.com/photo-1542718610-a1d656d1884c?w=1200&q=80',
-                'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?w=1200&q=80',
-                'https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=1200&q=80',
-            ]
-        },
-        {
-            title: 'Moderne enebolig med stor hage',
-            sub: 'Steinkjer · 2025',
-            cover: 'https://images.unsplash.com/photo-1576941089067-2de3c901e126?w=800&q=80',
-            images: [
-                'https://images.unsplash.com/photo-1576941089067-2de3c901e126?w=1200&q=80',
-                'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80',
-                'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=80',
-                'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1200&q=80',
-            ]
-        }
-    ];
+    <section class="kontakt" id="kontakt">
+        <div class="kontakt-inner">
+            <div class="section-label" style="justify-content:center">Kontakt</div>
+            <h2>La oss skape noe bra sammen</h2>
+            <p>Ta kontakt for pristilbud eller spørsmål. Jeg dekker Levanger og omkringliggende kommuner.</p>
+            <a href="mailto:hei@bergboligfoto.no" class="kontakt-btn">Send en melding</a>
+        </div>
+    </section>
 
-    // Build portfolio grid
-    const grid = document.getElementById('portfolioGrid');
-    projects.forEach((p, i) => {
-        const card = document.createElement('div');
-        card.className = 'portfolio-card';
-        card.innerHTML = `
-            <img src="${p.cover}" alt="${p.title}" loading="lazy">
-            <div class="portfolio-card-overlay">
-                <div class="portfolio-card-title">${p.title}</div>
-                <div class="portfolio-card-sub">${p.sub}</div>
-            </div>
-            <div class="portfolio-card-btn">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="1.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            </div>
-        `;
-        card.addEventListener('click', () => openLightbox(i));
-        grid.appendChild(card);
+    <footer>
+        <p>© 2025 Berg Boligfoto</p>
+        <p>Levanger, Trøndelag</p>
+    </footer>
+</div>
+
+<script>
+// ── CURSOR ───────────────────────────────────────────────────
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursorRing');
+let mX=0,mY=0,rX=0,rY=0;
+document.addEventListener('mousemove',e=>{
+    mX=e.clientX; mY=e.clientY;
+    cursor.style.left=mX-4+'px'; cursor.style.top=mY-4+'px';
+});
+(function loopRing(){
+    rX+=(mX-rX-16)*0.12; rY+=(mY-rY-16)*0.12;
+    ring.style.left=rX+'px'; ring.style.top=rY+'px';
+    requestAnimationFrame(loopRing);
+})();
+function addHover(el){
+    el.addEventListener('mouseenter',()=>cursor.style.transform='scale(3)');
+    el.addEventListener('mouseleave',()=>cursor.style.transform='scale(1)');
+}
+document.querySelectorAll('a,button').forEach(addHover);
+
+// ── PORTFOLIO ────────────────────────────────────────────────
+const projects=[
+    { title:'Familievennlig hus i sentrum', sub:'Levanger · 2025',
+      images:['https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=900&q=80',
+              'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=900&q=80',
+              'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=900&q=80',
+              'https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=900&q=80']},
+    { title:'Praktfull leilighet med utsikt', sub:'Verdal · 2025',
+      images:['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=900&q=80',
+              'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=900&q=80',
+              'https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?w=900&q=80']},
+    { title:'Naturrik hytte ved fjorden', sub:'Inderøy · 2025',
+      images:['https://images.unsplash.com/photo-1542718610-a1d656d1884c?w=900&q=80',
+              'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?w=900&q=80',
+              'https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=900&q=80']},
+    { title:'Moderne enebolig med stor hage', sub:'Steinkjer · 2025',
+      images:['https://images.unsplash.com/photo-1576941089067-2de3c901e126?w=900&q=80',
+              'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&q=80',
+              'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=900&q=80',
+              'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=900&q=80']}
+];
+
+const track=document.getElementById('portfolioTrack');
+projects.forEach(p=>{
+    let cur=0;
+    const card=document.createElement('div');
+    card.className='portfolio-card';
+
+    const slider=document.createElement('div');
+    slider.className='card-slider';
+
+    // Slides
+    const slides=p.images.map((src,i)=>{
+        const slide=document.createElement('div');
+        slide.className='card-slide'+(i===0?' active':'');
+        const img=document.createElement('img');
+        img.src=i===0?src:''; img.dataset.src=src;
+        img.alt=p.title; img.draggable=false;
+        slide.appendChild(img);
+        slider.appendChild(slide);
+        return slide;
     });
 
-    // ─── LIGHTBOX ─────────────────────────────────────────────
-    const lightbox    = document.getElementById('lightbox');
-    const lbImg       = document.getElementById('lightbox-img');
-    const lbTitle     = document.getElementById('lightbox-title');
-    const lbCounter   = document.getElementById('lightbox-counter');
-    const lbClose     = document.getElementById('lightbox-close');
-    const lbPrev      = document.getElementById('lightbox-prev');
-    const lbNext      = document.getElementById('lightbox-next');
-
-    let currentProject = 0;
-    let currentImg     = 0;
-
-    function openLightbox(projectIdx) {
-        currentProject = projectIdx;
-        currentImg = 0;
-        showLbImg();
-        lightbox.classList.add('open');
-        document.body.style.overflow = 'hidden';
-    }
-    function closeLightbox() {
-        lightbox.classList.remove('open');
-        document.body.style.overflow = '';
-    }
-    function showLbImg(direction = 0) {
-        const p = projects[currentProject];
-        lbTitle.textContent = p.title;
-        lbCounter.textContent = `${currentImg + 1} / ${p.images.length}`;
-        if (direction !== 0) {
-            lbImg.classList.add('fade');
-            setTimeout(() => {
-                lbImg.src = p.images[currentImg];
-                lbImg.classList.remove('fade');
-            }, 380);
-        } else {
-            lbImg.src = p.images[currentImg];
-        }
-    }
-    lbClose.addEventListener('click', closeLightbox);
-    lbPrev.addEventListener('click', () => {
-        const p = projects[currentProject];
-        currentImg = (currentImg - 1 + p.images.length) % p.images.length;
-        showLbImg(-1);
+    // Dots
+    const dotsWrap=document.createElement('div');
+    dotsWrap.className='card-dots';
+    const dots=p.images.map((_,i)=>{
+        const d=document.createElement('span');
+        d.className='card-dot'+(i===0?' active':'');
+        dotsWrap.appendChild(d);
+        return d;
     });
-    lbNext.addEventListener('click', () => {
-        const p = projects[currentProject];
-        currentImg = (currentImg + 1) % p.images.length;
-        showLbImg(1);
-    });
-    document.addEventListener('keydown', e => {
-        if (!lightbox.classList.contains('open')) return;
-        if (e.key === 'ArrowRight') lbNext.click();
-        if (e.key === 'ArrowLeft')  lbPrev.click();
-        if (e.key === 'Escape')     closeLightbox();
-    });
-    lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+    slider.appendChild(dotsWrap);
 
-    // ─── INTRO → LOGO FLIP ────────────────────────────────────
-    const intro      = document.getElementById('intro');
-    const introTitle = document.getElementById('intro-title');
-    const introHouse = document.getElementById('intro-house');
-    const navLogo    = document.getElementById('nav-logo');
-    const navContact = document.getElementById('navContact');
-    const heroText   = document.getElementById('hero-text');
-    const scrollHint = document.getElementById('scroll-hint');
-    const mainContent= document.getElementById('main-content');
-    const heroBg     = document.getElementById('hero-bg');
-
-    // After house is drawn (~3.7s): fade house, animate title to nav position
-    setTimeout(() => {
-        // 1. Fade out house
-        introHouse.style.transition = 'opacity 0.5s ease';
-        introHouse.style.opacity = '0';
-
-        setTimeout(() => {
-            // 2. Get positions for FLIP
-            const fromRect = introTitle.getBoundingClientRect();
-            navLogo.style.opacity = '0';
-            navLogo.style.visibility = 'visible';
-            const toRect = navLogo.getBoundingClientRect();
-
-            // 3. Calculate delta
-            const dx = fromRect.left - toRect.left;
-            const dy = fromRect.top  - toRect.top;
-            const scaleX = fromRect.width  / toRect.width;
-            const scaleY = fromRect.height / toRect.height;
-
-            // 4. Start: place navLogo at intro position
-            navLogo.style.transition = 'none';
-            navLogo.style.transform  = `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`;
-            navLogo.style.transformOrigin = 'top left';
-            navLogo.style.opacity    = '1';
-
-            // 5. Fade out intro title
-            introTitle.style.transition = 'opacity 0.3s ease';
-            introTitle.style.opacity    = '0';
-
-            // 6. Animate navLogo to its real position
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    navLogo.style.transition  = 'transform 0.9s cubic-bezier(0.16,1,0.3,1), opacity 0.3s ease';
-                    navLogo.style.transform   = 'translate(0,0) scale(1,1)';
-                });
-            });
-
-            // 7. After logo lands: hide intro overlay, show rest
-            setTimeout(() => {
-                intro.classList.add('done');
-                heroText.classList.add('visible');
-                scrollHint.classList.add('visible');
-                navContact.classList.add('visible');
-                mainContent.classList.add('visible');
-                document.body.classList.add('unlocked');
-            }, 950);
-
-        }, 550);
-    }, 3700);
-
-    // ─── SCROLL HERO TRANSITION ───────────────────────────────
-    const scrollNeeded = window.innerHeight;
-    let accumulated = 0;
-    let heroLocked  = true;
-
-    function applyProgress(p) {
-        p = Math.max(0, Math.min(p, 1));
-        // Text fades out smoothly from 0→80% of scroll
-        const textP = Math.min(p / 0.8, 1);
-        heroText.style.opacity   = 1 - textP;
-        scrollHint.style.opacity = Math.max(0, 1 - p * 4);
-        // Image fades in slower – from 20%→100% of scroll
-        const imgP = Math.max(0, (p - 0.2) / 0.8);
-        heroBg.style.opacity     = Math.min(imgP * 0.9, 0.85);
-        heroBg.style.transform   = `scale(${1.04 - p * 0.04})`;
+    function goTo(idx){
+        slides[cur].classList.remove('active');
+        dots[cur].classList.remove('active');
+        cur=(idx+p.images.length)%p.images.length;
+        const img=slides[cur].querySelector('img');
+        if(!img.src||img.src===window.location.href) img.src=img.dataset.src;
+        slides[cur].classList.add('active');
+        dots[cur].classList.add('active');
     }
 
-    window.addEventListener('wheel', e => {
-        if (!heroLocked) {
-            if (window.scrollY === 0 && e.deltaY < 0) {
-                heroLocked  = true;
-                accumulated = scrollNeeded;
-            }
-            return;
-        }
+    if(p.images.length>1){
+        const prev=document.createElement('button');
+        prev.className='card-arrow prev';
+        prev.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15,18 9,12 15,6"/></svg>';
+        prev.addEventListener('click',e=>{e.stopPropagation();goTo(cur-1);});
+
+        const next=document.createElement('button');
+        next.className='card-arrow next';
+        next.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9,6 15,12 9,18"/></svg>';
+        next.addEventListener('click',e=>{e.stopPropagation();goTo(cur+1);});
+
+        slider.appendChild(prev);
+        slider.appendChild(next);
+        addHover(prev); addHover(next);
+    }
+
+    // Touch swipe
+    let tx=0;
+    slider.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;},{passive:true});
+    slider.addEventListener('touchend',e=>{
+        const diff=tx-e.changedTouches[0].clientX;
+        if(Math.abs(diff)>40) goTo(diff>0?cur+1:cur-1);
+    });
+
+    const info=document.createElement('div');
+    info.className='card-info';
+    info.innerHTML=`<div class="card-title">${p.title}</div><div class="card-sub">${p.sub}</div>`;
+
+    card.appendChild(slider);
+    card.appendChild(info);
+    track.appendChild(card);
+    addHover(card);
+});
+
+// Drag-to-scroll portfolio
+const wrap=document.getElementById('portfolioWrap');
+let isDrag=false,dStartX=0,dScrollL=0;
+wrap.addEventListener('mousedown',e=>{isDrag=true;dStartX=e.pageX;dScrollL=wrap.scrollLeft;wrap.classList.add('grabbing');});
+window.addEventListener('mousemove',e=>{if(isDrag) wrap.scrollLeft=dScrollL-(e.pageX-dStartX);});
+window.addEventListener('mouseup',()=>{isDrag=false;wrap.classList.remove('grabbing');});
+
+// ── INTRO SEQUENCE ───────────────────────────────────────────
+const introEl    =document.getElementById('intro');
+const introTitle =document.getElementById('intro-title');
+const introHouse =document.getElementById('intro-house');
+const navLogo    =document.getElementById('nav-logo');
+const navContact =document.getElementById('navContact');
+const heroText   =document.getElementById('hero-text');
+const scrollHint =document.getElementById('scroll-hint');
+const mainContent=document.getElementById('main-content');
+const heroBg     =document.getElementById('hero-bg');
+
+// t=200ms  — title fades in
+setTimeout(()=>{
+    introTitle.style.transition='opacity 1s ease';
+    introTitle.style.opacity='1';
+},200);
+
+// t=1400ms — house fades in & starts drawing
+setTimeout(()=>{
+    introHouse.style.opacity='1';
+    const path=document.getElementById('house-path');
+    path.style.transition='stroke-dashoffset 1.6s cubic-bezier(0.4,0,0.2,1)';
+    path.style.strokeDashoffset='0';
+},1400);
+
+// t=3200ms — title travels to nav, overlay fades simultaneously
+// (house drawing finishes ~1400+1600=3000ms, 200ms buffer)
+setTimeout(()=>{
+    // Measure nav-logo destination
+    navLogo.style.visibility='visible';
+    navLogo.style.opacity='0';
+    const toR=navLogo.getBoundingClientRect();
+    const frR=introTitle.getBoundingClientRect();
+
+    const dx=(toR.left+toR.width/2)-(frR.left+frR.width/2);
+    const dy=(toR.top +toR.height/2)-(frR.top +frR.height/2);
+    const sc=toR.height/frR.height;
+
+    // Slow, elegant travel: 1.8s
+    introTitle.style.transition=
+        'transform 1.8s cubic-bezier(0.16,1,0.3,1), opacity 0.6s ease 1.2s';
+    introTitle.style.transformOrigin='center center';
+    introTitle.style.transform=
+        `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${sc})`;
+    introTitle.style.opacity='0'; // fades near end of travel
+
+    // Intro overlay fades with the travel
+    introEl.classList.add('fading');
+
+},3200);
+
+// t=3200+1800=5000ms — title has landed, swap to real nav-logo
+setTimeout(()=>{
+    navLogo.classList.add('visible');
+    introTitle.style.display='none';
+
+    // House waits 1 extra second before fading
+    setTimeout(()=>{
+        introHouse.style.opacity='0';
+
+        // After house gone: reveal hero & page
+        setTimeout(()=>{
+            introEl.classList.add('gone');
+            heroText.style.transition='opacity 1s ease';
+            heroText.style.opacity='1';
+            scrollHint.style.transition='opacity 1s ease 0.3s';
+            scrollHint.style.opacity='1';
+            navContact.classList.add('visible');
+            mainContent.classList.add('visible');
+            document.body.classList.add('unlocked');
+        },700);
+    },1000);
+
+},5000);
+
+// ── SCROLL STATE ─────────────────────────────────────────────
+const VH=window.innerHeight;
+let accumulated=0;
+let heroLocked=true;
+let smTarget=0, smCurrent=0;
+let progScroll=false; // flag: scrollTo called by us
+
+function setHeroProgress(p){
+    p=Math.max(0,Math.min(p,1));
+    const tP=Math.min(p/0.70,1);          // text: fade out by 70% of scroll
+    heroText.style.opacity=String(1-tP);
+    scrollHint.style.opacity=String(Math.max(0,1-p*5));
+    const iP=Math.max(0,(p-0.30)/0.70);   // image: fade in from 30% onward
+    heroBg.style.opacity=String(Math.min(iP*0.9,0.85));
+    heroBg.style.transform=`scale(${1.04-p*0.04})`;
+}
+
+// Single wheel handler
+document.addEventListener('wheel',e=>{
+    if(heroLocked){
         e.preventDefault();
-        accumulated = Math.max(0, Math.min(accumulated + e.deltaY, scrollNeeded));
-        applyProgress(accumulated / scrollNeeded);
-        if (accumulated >= scrollNeeded) heroLocked = false;
-    }, { passive: false });
+        accumulated=Math.max(0,Math.min(accumulated+e.deltaY,VH));
+        setHeroProgress(accumulated/VH);
+        if(accumulated>=VH){ heroLocked=false; smTarget=0; smCurrent=0; }
+        return;
+    }
+    // Normal smooth scroll
+    e.preventDefault();
+    smTarget=Math.max(0,Math.min(
+        smTarget+e.deltaY*0.85,
+        document.body.scrollHeight-window.innerHeight
+    ));
+},{passive:false});
 
-    window.addEventListener('scroll', () => {
-        if (!heroLocked && window.scrollY === 0) {
-            heroLocked  = true;
-            accumulated = scrollNeeded;
+// Touch hero support
+let tY0=0;
+window.addEventListener('touchstart',e=>{tY0=e.touches[0].clientY;},{passive:true});
+window.addEventListener('touchmove',e=>{
+    if(!heroLocked) return;
+    e.preventDefault();
+    const d=tY0-e.touches[0].clientY; tY0=e.touches[0].clientY;
+    accumulated=Math.max(0,Math.min(accumulated+d,VH));
+    setHeroProgress(accumulated/VH);
+    if(accumulated>=VH){ heroLocked=false; smTarget=0; smCurrent=0; }
+},{passive:false});
+
+// Detect user scrolling back to top (scrollbar/keyboard)
+window.addEventListener('scroll',()=>{
+    if(progScroll) return;
+    if(!heroLocked && window.scrollY===0 && smTarget>50){
+        heroLocked=true;
+        accumulated=VH;
+        smTarget=0; smCurrent=0;
+        setHeroProgress(1); // freeze hero at end state until they scroll back up
+    }
+});
+
+// Smooth scroll loop
+(function loop(){
+    if(!heroLocked){
+        const diff=smTarget-smCurrent;
+        if(Math.abs(diff)>0.1){
+            smCurrent+=diff*0.09;
+            progScroll=true;
+            window.scrollTo(0,smCurrent);
+            progScroll=false;
         }
-    });
+    }
+    requestAnimationFrame(loop);
+})();
 
-    let lastSY = 0;
-    window.addEventListener('scroll', () => {
-        if (heroLocked) return;
-        const sy = window.scrollY;
-        if (sy < scrollNeeded * 0.6) {
-            applyProgress(1 - ((scrollNeeded * 0.6 - sy) / (scrollNeeded * 0.6)) * 0.4);
-        } else {
-            applyProgress(1);
-        }
-        lastSY = sy;
-    });
-
-    let tY = 0;
-    window.addEventListener('touchstart', e => { tY = e.touches[0].clientY; });
-    window.addEventListener('touchmove', e => {
-        if (!heroLocked) return;
-        e.preventDefault();
-        const d = tY - e.touches[0].clientY;
-        tY = e.touches[0].clientY;
-        accumulated = Math.max(0, Math.min(accumulated + d, scrollNeeded));
-        applyProgress(accumulated / scrollNeeded);
-        if (accumulated >= scrollNeeded) heroLocked = false;
-    }, { passive: false });
-
-    // ─── SCROLL REVEAL ────────────────────────────────────────
-    const revealObserver = new IntersectionObserver(entries => {
-        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-    }, { threshold: 0.15 });
-    document.querySelectorAll('.tjeneste-item, .portfolio-card').forEach(el => revealObserver.observe(el));
-    </script>
+// ── SCROLL REVEAL ────────────────────────────────────────────
+const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting) e.target.classList.add('visible');});
+},{threshold:0.1});
+document.querySelectorAll('.tjeneste-item,.portfolio-card').forEach(el=>obs.observe(el));
+</script>
 </body>
 </html>
