@@ -16,30 +16,32 @@
         .cursor { width:8px; height:8px; background:var(--white); border-radius:50%; position:fixed; top:0; left:0; pointer-events:none; z-index:9999; transition:transform 0.15s ease; }
         .cursor-ring { width:32px; height:32px; border:1px solid rgba(240,237,232,0.4); border-radius:50%; position:fixed; top:0; left:0; pointer-events:none; z-index:9998; }
 
-        /* INTRO OVERLAY — only the black background */
-        #intro { position:fixed; inset:0; background:var(--black); z-index:600; transition:opacity 1.2s ease; pointer-events:none; }
+        /* INTRO OVERLAY – solid black, covers everything */
+        #intro { position:fixed; inset:0; background:var(--black); z-index:600; transition:opacity 0.8s ease; pointer-events:none; }
         #intro.fading { opacity:0; }
         #intro.gone   { display:none; }
 
-        /* INTRO TITLE — floats above everything, travels to nav */
+        /* FLOATING TITLE – above overlay, travels to nav */
         #intro-title {
             position:fixed; left:50%; top:50%;
             transform:translate(-50%,-50%);
             font-family:'Cormorant Garamond',serif;
             font-size:clamp(3rem,8vw,7rem);
-            font-weight:300; letter-spacing:8px; text-transform:uppercase; white-space:nowrap;
+            font-weight:300; letter-spacing:8px;
+            text-transform:uppercase; white-space:nowrap;
             z-index:700; opacity:0; pointer-events:none;
+            /* transition added by JS */
         }
 
-        /* INTRO HOUSE */
+        /* FLOATING HOUSE */
         #intro-house { position:fixed; left:50%; top:50%; transform:translate(-50%,70px); z-index:700; opacity:0; transition:opacity 0.7s ease; pointer-events:none; }
         #house-path  { stroke-dasharray:300; stroke-dashoffset:300; }
 
         /* NAV */
         nav { position:fixed; top:0; left:0; right:0; z-index:500; padding:2rem 3rem; display:flex; justify-content:space-between; align-items:center; }
-        #nav-logo { font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:400; letter-spacing:4px; text-transform:uppercase; color:var(--white); text-decoration:none; opacity:0; visibility:hidden; transition:opacity 0.7s ease; }
+        #nav-logo { font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:400; letter-spacing:4px; text-transform:uppercase; color:var(--white); text-decoration:none; opacity:0; visibility:hidden; transition:opacity 0.5s ease; }
         #nav-logo.visible { opacity:1; visibility:visible; }
-        .nav-contact { display:inline-block; padding:0.6rem 1.6rem; border:1px solid rgba(240,237,232,0.5); color:var(--white); text-decoration:none; font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; opacity:0; transition:opacity 0.8s ease,background 0.3s ease,color 0.3s ease; }
+        .nav-contact { display:inline-block; padding:0.6rem 1.6rem; border:1px solid rgba(240,237,232,0.5); color:var(--white); text-decoration:none; font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; opacity:0; transition:opacity 0.8s ease,background 0.3s,color 0.3s; }
         .nav-contact.visible { opacity:1; }
         .nav-contact:hover { background:var(--white); color:var(--black); }
 
@@ -50,7 +52,7 @@
         #hero-text { position:relative; text-align:center; z-index:2; opacity:0; pointer-events:none; }
         #hero-text h1 { font-family:'Cormorant Garamond',serif; font-size:clamp(3rem,8vw,7rem); font-weight:300; letter-spacing:8px; text-transform:uppercase; line-height:1; margin-bottom:1rem; }
         #hero-text p  { font-size:0.85rem; letter-spacing:4px; text-transform:uppercase; color:var(--accent); }
-        #scroll-hint  { position:absolute; bottom:2.5rem; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:0.5rem; z-index:2; opacity:0; pointer-events:none; }
+        #scroll-hint { position:absolute; bottom:2.5rem; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:0.5rem; z-index:2; opacity:0; pointer-events:none; }
         #scroll-hint span { font-size:0.6rem; letter-spacing:3px; text-transform:uppercase; color:var(--grey); }
         .scroll-line { width:1px; height:40px; background:linear-gradient(to bottom,var(--accent),transparent); animation:scrollPulse 2s ease infinite; }
 
@@ -68,7 +70,7 @@
         .tjeneste-content h3 { font-family:'Cormorant Garamond',serif; font-size:2.2rem; font-weight:400; margin-bottom:1rem; letter-spacing:1px; }
         .tjeneste-content p { color:var(--grey); line-height:1.9; font-size:0.95rem; }
 
-        /* PORTFOLIO */
+        /* PORTFOLIO – horizontal scroll */
         .portfolio { padding:8rem 0 8rem 3rem; border-top:1px solid #2a2a2a; overflow:hidden; }
         .portfolio .section-label { padding-right:3rem; }
         .portfolio-track-wrap { overflow-x:auto; overflow-y:hidden; cursor:grab; scrollbar-width:none; -ms-overflow-style:none; }
@@ -76,35 +78,34 @@
         .portfolio-track-wrap.grabbing { cursor:grabbing; user-select:none; }
         .portfolio-track { display:flex; gap:1.5rem; width:max-content; padding-right:3rem; }
 
-        .portfolio-card { width:420px; flex-shrink:0; opacity:0; transform:translateX(30px); transition:opacity 0.6s ease,transform 0.6s ease; }
+        .portfolio-card { width:420px; flex-shrink:0; position:relative; overflow:hidden; opacity:0; transform:translateX(30px); transition:opacity 0.6s ease,transform 0.6s ease; }
         .portfolio-card.visible { opacity:1; transform:translateX(0); }
+        .portfolio-card img { width:100%; aspect-ratio:4/3; object-fit:cover; display:block; transition:transform 0.7s cubic-bezier(0.16,1,0.3,1); pointer-events:none; }
+        .portfolio-card:hover img { transform:scale(1.04); }
+        .portfolio-card-overlay { position:absolute; bottom:0; left:0; right:0; padding:2rem 1.5rem 1.5rem; background:linear-gradient(to top,rgba(8,8,8,0.85),transparent); }
+        .portfolio-card-title { font-family:'Cormorant Garamond',serif; font-size:1.4rem; font-weight:400; letter-spacing:1px; margin-bottom:0.3rem; }
+        .portfolio-card-sub { font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; color:var(--accent); }
 
-        /* Card slider */
-        .card-slider { position:relative; width:100%; aspect-ratio:4/3; overflow:hidden; background:#111; }
-        .card-slide   { position:absolute; inset:0; opacity:0; transition:opacity 0.5s ease; pointer-events:none; }
-        .card-slide.active { opacity:1; pointer-events:auto; }
-        .card-slide img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.8s cubic-bezier(0.16,1,0.3,1); pointer-events:none; }
-        .portfolio-card:hover .card-slide.active img { transform:scale(1.04); }
-
-        .card-arrow { position:absolute; top:50%; transform:translateY(-50%); background:rgba(8,8,8,0.55); border:1px solid rgba(240,237,232,0.25); color:var(--white); width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; z-index:3; cursor:none; opacity:0; transition:opacity 0.3s,background 0.3s; }
-        .card-slider:hover .card-arrow { opacity:1; }
-        .card-arrow:hover { background:rgba(240,237,232,0.15); }
-        .card-arrow.prev { left:0.75rem; }
-        .card-arrow.next { right:0.75rem; }
-
-        .card-dots { position:absolute; bottom:0.75rem; left:50%; transform:translateX(-50%); display:flex; gap:5px; z-index:3; }
-        .card-dot { width:5px; height:5px; border-radius:50%; background:rgba(240,237,232,0.35); transition:background 0.3s,transform 0.3s; }
-        .card-dot.active { background:var(--white); transform:scale(1.2); }
-
-        .card-info { padding:1.2rem 0 0; }
-        .card-title { font-family:'Cormorant Garamond',serif; font-size:1.4rem; font-weight:400; letter-spacing:1px; margin-bottom:0.3rem; }
-        .card-sub   { font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; color:var(--accent); }
+        /* LIGHTBOX */
+        #lightbox { position:fixed; inset:0; background:rgba(8,8,8,0.97); z-index:800; display:none; flex-direction:column; align-items:center; justify-content:center; }
+        #lightbox.open { display:flex; }
+        #lightbox-close { position:absolute; top:2rem; right:2.5rem; background:none; border:none; color:var(--white); font-size:0.7rem; letter-spacing:3px; text-transform:uppercase; cursor:none; opacity:0.6; transition:opacity 0.3s; font-family:'Montserrat',sans-serif; }
+        #lightbox-close:hover { opacity:1; }
+        #lightbox-title { position:absolute; top:2rem; left:2.5rem; font-family:'Cormorant Garamond',serif; font-size:1.4rem; font-weight:400; letter-spacing:2px; }
+        #lightbox-img-wrap { width:100%; max-width:900px; padding:0 4rem; position:relative; }
+        #lightbox-img { width:100%; max-height:70vh; object-fit:contain; display:block; transition:opacity 0.4s ease; }
+        #lightbox-img.fade { opacity:0; }
+        #lightbox-prev,#lightbox-next { position:absolute; top:50%; transform:translateY(-50%); background:none; border:1px solid rgba(240,237,232,0.3); color:var(--white); width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:none; transition:background 0.3s,border-color 0.3s; }
+        #lightbox-prev { left:0; } #lightbox-next { right:0; }
+        #lightbox-prev:hover,#lightbox-next:hover { background:rgba(240,237,232,0.1); border-color:var(--accent); }
+        #lightbox-counter { margin-top:1.5rem; font-size:0.7rem; letter-spacing:3px; color:var(--grey); }
+        #lightbox-hint { margin-top:0.6rem; font-size:0.65rem; letter-spacing:2px; color:#555; text-transform:uppercase; }
 
         /* KONTAKT */
         .kontakt { padding:8rem 3rem; text-align:center; border-top:1px solid #2a2a2a; }
         .kontakt-inner { max-width:600px; margin:0 auto; }
         .kontakt h2 { font-family:'Cormorant Garamond',serif; font-size:clamp(2.5rem,5vw,4rem); font-weight:300; letter-spacing:3px; margin-bottom:1.5rem; line-height:1.1; }
-        .kontakt p  { color:var(--grey); font-size:0.95rem; line-height:1.9; margin-bottom:3rem; }
+        .kontakt p { color:var(--grey); font-size:0.95rem; line-height:1.9; margin-bottom:3rem; }
         .kontakt-btn { display:inline-block; padding:1.1rem 3rem; border:1px solid var(--accent); color:var(--white); text-decoration:none; font-size:0.75rem; letter-spacing:3px; text-transform:uppercase; position:relative; overflow:hidden; }
         .kontakt-btn::before { content:''; position:absolute; inset:0; background:var(--accent); transform:translateX(-100%); transition:transform 0.4s ease; z-index:-1; }
         .kontakt-btn:hover::before { transform:translateX(0); }
@@ -122,25 +123,25 @@
             .tjenester,.kontakt{padding:5rem 1.5rem}
             .portfolio{padding:5rem 0 5rem 1.5rem}
             footer{flex-direction:column;gap:1rem;text-align:center}
+            #lightbox-img-wrap{padding:0 3rem}
         }
     </style>
 </head>
 <body>
 
-<div class="cursor"      id="cursor"></div>
+<div class="cursor" id="cursor"></div>
 <div class="cursor-ring" id="cursorRing"></div>
 
-<!-- INTRO: solid black overlay -->
+<!-- INTRO: black overlay -->
 <div id="intro"></div>
 
-<!-- FLOATING TITLE — the only Berg Boligfoto on screen during intro -->
+<!-- Floating title – only "Berg Boligfoto" on screen during intro -->
 <div id="intro-title">Berg Boligfoto</div>
 
-<!-- FLOATING HOUSE -->
+<!-- Floating house -->
 <div id="intro-house">
-    <svg width="80" height="70" viewBox="0 0 80 70" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path id="house-path"
-              d="M40 5 L75 35 L65 35 L65 65 L45 65 L45 48 L35 48 L35 65 L15 65 L15 35 L5 35 Z"
+    <svg width="80" height="70" viewBox="0 0 80 70" fill="none">
+        <path id="house-path" d="M40 5 L75 35 L65 35 L65 65 L45 65 L45 48 L35 48 L35 65 L15 65 L15 35 L5 35 Z"
               stroke="#e8d8c0" stroke-width="1.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
     </svg>
 </div>
@@ -157,10 +158,7 @@
         <h1>Berg Boligfoto</h1>
         <p>Eiendomsfotografi · Levanger & omegn</p>
     </div>
-    <div id="scroll-hint">
-        <span>Scroll</span>
-        <div class="scroll-line"></div>
-    </div>
+    <div id="scroll-hint"><span>Scroll</span><div class="scroll-line"></div></div>
 </div>
 
 <div id="main-content">
@@ -197,130 +195,128 @@
     </footer>
 </div>
 
+<!-- LIGHTBOX -->
+<div id="lightbox">
+    <div id="lightbox-title"></div>
+    <button id="lightbox-close">Lukk</button>
+    <div id="lightbox-img-wrap">
+        <button id="lightbox-prev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15,18 9,12 15,6"/></svg></button>
+        <img id="lightbox-img" src="" alt="">
+        <button id="lightbox-next"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9,6 15,12 9,18"/></svg></button>
+    </div>
+    <div id="lightbox-counter"></div>
+    <div id="lightbox-hint">Scroll eller bruk piltaster for å bla</div>
+</div>
+
 <script>
 // ── CURSOR ───────────────────────────────────────────────────
-const cursor = document.getElementById('cursor');
-const ring   = document.getElementById('cursorRing');
+const cursorEl=document.getElementById('cursor');
+const ringEl  =document.getElementById('cursorRing');
 let mX=0,mY=0,rX=0,rY=0;
 document.addEventListener('mousemove',e=>{
     mX=e.clientX; mY=e.clientY;
-    cursor.style.left=mX-4+'px'; cursor.style.top=mY-4+'px';
+    cursorEl.style.left=mX-4+'px'; cursorEl.style.top=mY-4+'px';
 });
-(function loopRing(){
-    rX+=(mX-rX-16)*0.12; rY+=(mY-rY-16)*0.12;
-    ring.style.left=rX+'px'; ring.style.top=rY+'px';
-    requestAnimationFrame(loopRing);
-})();
+(function loopRing(){ rX+=(mX-rX-16)*0.12; rY+=(mY-rY-16)*0.12; ringEl.style.left=rX+'px'; ringEl.style.top=rY+'px'; requestAnimationFrame(loopRing); })();
 function addHover(el){
-    el.addEventListener('mouseenter',()=>cursor.style.transform='scale(3)');
-    el.addEventListener('mouseleave',()=>cursor.style.transform='scale(1)');
+    el.addEventListener('mouseenter',()=>cursorEl.style.transform='scale(3)');
+    el.addEventListener('mouseleave',()=>cursorEl.style.transform='scale(1)');
 }
 document.querySelectorAll('a,button').forEach(addHover);
 
-// ── PORTFOLIO ────────────────────────────────────────────────
+// ── PORTFOLIO DATA ───────────────────────────────────────────
 const projects=[
     { title:'Familievennlig hus i sentrum', sub:'Levanger · 2025',
-      images:['https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=900&q=80',
-              'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=900&q=80',
-              'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=900&q=80',
-              'https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=900&q=80']},
+      cover:'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
+      images:['https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1200&q=80',
+              'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=1200&q=80',
+              'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1200&q=80',
+              'https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=1200&q=80']},
     { title:'Praktfull leilighet med utsikt', sub:'Verdal · 2025',
-      images:['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=900&q=80',
-              'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=900&q=80',
-              'https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?w=900&q=80']},
+      cover:'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80',
+      images:['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&q=80',
+              'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=1200&q=80',
+              'https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?w=1200&q=80']},
     { title:'Naturrik hytte ved fjorden', sub:'Inderøy · 2025',
-      images:['https://images.unsplash.com/photo-1542718610-a1d656d1884c?w=900&q=80',
-              'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?w=900&q=80',
-              'https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=900&q=80']},
+      cover:'https://images.unsplash.com/photo-1542718610-a1d656d1884c?w=800&q=80',
+      images:['https://images.unsplash.com/photo-1542718610-a1d656d1884c?w=1200&q=80',
+              'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?w=1200&q=80',
+              'https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=1200&q=80']},
     { title:'Moderne enebolig med stor hage', sub:'Steinkjer · 2025',
-      images:['https://images.unsplash.com/photo-1576941089067-2de3c901e126?w=900&q=80',
-              'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&q=80',
-              'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=900&q=80',
-              'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=900&q=80']}
+      cover:'https://images.unsplash.com/photo-1576941089067-2de3c901e126?w=800&q=80',
+      images:['https://images.unsplash.com/photo-1576941089067-2de3c901e126?w=1200&q=80',
+              'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80',
+              'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=80',
+              'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1200&q=80']}
 ];
 
+// Build grid
 const track=document.getElementById('portfolioTrack');
-projects.forEach(p=>{
-    let cur=0;
+projects.forEach((p,i)=>{
     const card=document.createElement('div');
     card.className='portfolio-card';
-
-    const slider=document.createElement('div');
-    slider.className='card-slider';
-
-    // Slides
-    const slides=p.images.map((src,i)=>{
-        const slide=document.createElement('div');
-        slide.className='card-slide'+(i===0?' active':'');
-        const img=document.createElement('img');
-        img.src=i===0?src:''; img.dataset.src=src;
-        img.alt=p.title; img.draggable=false;
-        slide.appendChild(img);
-        slider.appendChild(slide);
-        return slide;
-    });
-
-    // Dots
-    const dotsWrap=document.createElement('div');
-    dotsWrap.className='card-dots';
-    const dots=p.images.map((_,i)=>{
-        const d=document.createElement('span');
-        d.className='card-dot'+(i===0?' active':'');
-        dotsWrap.appendChild(d);
-        return d;
-    });
-    slider.appendChild(dotsWrap);
-
-    function goTo(idx){
-        slides[cur].classList.remove('active');
-        dots[cur].classList.remove('active');
-        cur=(idx+p.images.length)%p.images.length;
-        const img=slides[cur].querySelector('img');
-        if(!img.src||img.src===window.location.href) img.src=img.dataset.src;
-        slides[cur].classList.add('active');
-        dots[cur].classList.add('active');
-    }
-
-    if(p.images.length>1){
-        const prev=document.createElement('button');
-        prev.className='card-arrow prev';
-        prev.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15,18 9,12 15,6"/></svg>';
-        prev.addEventListener('click',e=>{e.stopPropagation();goTo(cur-1);});
-
-        const next=document.createElement('button');
-        next.className='card-arrow next';
-        next.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9,6 15,12 9,18"/></svg>';
-        next.addEventListener('click',e=>{e.stopPropagation();goTo(cur+1);});
-
-        slider.appendChild(prev);
-        slider.appendChild(next);
-        addHover(prev); addHover(next);
-    }
-
-    // Touch swipe
-    let tx=0;
-    slider.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;},{passive:true});
-    slider.addEventListener('touchend',e=>{
-        const diff=tx-e.changedTouches[0].clientX;
-        if(Math.abs(diff)>40) goTo(diff>0?cur+1:cur-1);
-    });
-
-    const info=document.createElement('div');
-    info.className='card-info';
-    info.innerHTML=`<div class="card-title">${p.title}</div><div class="card-sub">${p.sub}</div>`;
-
-    card.appendChild(slider);
-    card.appendChild(info);
-    track.appendChild(card);
+    card.innerHTML=`
+        <img src="${p.cover}" alt="${p.title}" loading="lazy" draggable="false">
+        <div class="portfolio-card-overlay">
+            <div class="portfolio-card-title">${p.title}</div>
+            <div class="portfolio-card-sub">${p.sub}</div>
+        </div>`;
+    card.addEventListener('click',()=>openLightbox(i));
     addHover(card);
+    track.appendChild(card);
 });
 
 // Drag-to-scroll portfolio
 const wrap=document.getElementById('portfolioWrap');
-let isDrag=false,dStartX=0,dScrollL=0;
-wrap.addEventListener('mousedown',e=>{isDrag=true;dStartX=e.pageX;dScrollL=wrap.scrollLeft;wrap.classList.add('grabbing');});
-window.addEventListener('mousemove',e=>{if(isDrag) wrap.scrollLeft=dScrollL-(e.pageX-dStartX);});
+let isDrag=false,dX=0,dSL=0,dragMoved=0;
+wrap.addEventListener('mousedown',e=>{isDrag=true;dX=e.pageX;dSL=wrap.scrollLeft;dragMoved=0;wrap.classList.add('grabbing');});
+window.addEventListener('mousemove',e=>{if(!isDrag)return;dragMoved+=Math.abs(e.movementX);wrap.scrollLeft=dSL-(e.pageX-dX);});
 window.addEventListener('mouseup',()=>{isDrag=false;wrap.classList.remove('grabbing');});
+wrap.addEventListener('click',e=>{if(dragMoved>5)e.stopPropagation();},true);
+
+// ── LIGHTBOX ─────────────────────────────────────────────────
+const lightbox =document.getElementById('lightbox');
+const lbImg    =document.getElementById('lightbox-img');
+const lbTitle  =document.getElementById('lightbox-title');
+const lbCounter=document.getElementById('lightbox-counter');
+const lbPrev   =document.getElementById('lightbox-prev');
+const lbNext   =document.getElementById('lightbox-next');
+const lbClose  =document.getElementById('lightbox-close');
+let lbProj=0,lbIdx=0;
+
+function openLightbox(projIdx){ lbProj=projIdx; lbIdx=0; renderLb(); lightbox.classList.add('open'); }
+function closeLightbox(){ lightbox.classList.remove('open'); }
+function renderLb(dir=0){
+    const p=projects[lbProj];
+    lbTitle.textContent=p.title;
+    lbCounter.textContent=`${lbIdx+1} / ${p.images.length}`;
+    if(dir!==0){
+        lbImg.classList.add('fade');
+        setTimeout(()=>{ lbImg.src=p.images[lbIdx]; lbImg.classList.remove('fade'); },380);
+    } else { lbImg.src=p.images[lbIdx]; }
+}
+function lbGoNext(){ lbIdx=(lbIdx+1)%projects[lbProj].images.length; renderLb(1); }
+function lbGoPrev(){ lbIdx=(lbIdx-1+projects[lbProj].images.length)%projects[lbProj].images.length; renderLb(-1); }
+
+lbClose.addEventListener('click',closeLightbox);
+lbNext.addEventListener('click',lbGoNext);
+lbPrev.addEventListener('click',lbGoPrev);
+lightbox.addEventListener('click',e=>{ if(e.target===lightbox)closeLightbox(); });
+
+// Scroll through images in lightbox
+lightbox.addEventListener('wheel',e=>{
+    e.preventDefault();
+    e.stopPropagation();
+    if(e.deltaY>0) lbGoNext(); else lbGoPrev();
+},{ passive:false });
+
+// Keyboard
+document.addEventListener('keydown',e=>{
+    if(!lightbox.classList.contains('open'))return;
+    if(e.key==='ArrowRight'||e.key==='ArrowDown') lbGoNext();
+    if(e.key==='ArrowLeft' ||e.key==='ArrowUp')   lbGoPrev();
+    if(e.key==='Escape') closeLightbox();
+});
 
 // ── INTRO SEQUENCE ───────────────────────────────────────────
 const introEl    =document.getElementById('intro');
@@ -333,13 +329,13 @@ const scrollHint =document.getElementById('scroll-hint');
 const mainContent=document.getElementById('main-content');
 const heroBg     =document.getElementById('hero-bg');
 
-// t=200ms  — title fades in
+// t=200  : title fades in
 setTimeout(()=>{
     introTitle.style.transition='opacity 1s ease';
     introTitle.style.opacity='1';
 },200);
 
-// t=1400ms — house fades in & starts drawing
+// t=1400 : house fades in + starts drawing
 setTimeout(()=>{
     introHouse.style.opacity='1';
     const path=document.getElementById('house-path');
@@ -347,12 +343,10 @@ setTimeout(()=>{
     path.style.strokeDashoffset='0';
 },1400);
 
-// t=3200ms — title travels to nav, overlay fades simultaneously
-// (house drawing finishes ~1400+1600=3000ms, 200ms buffer)
+// t=3200 : title travels to nav corner (house still visible)
 setTimeout(()=>{
-    // Measure nav-logo destination
-    navLogo.style.visibility='visible';
-    navLogo.style.opacity='0';
+    // Temporarily show nav-logo to measure its position
+    navLogo.style.visibility='visible'; navLogo.style.opacity='0';
     const toR=navLogo.getBoundingClientRect();
     const frR=introTitle.getBoundingClientRect();
 
@@ -360,118 +354,118 @@ setTimeout(()=>{
     const dy=(toR.top +toR.height/2)-(frR.top +frR.height/2);
     const sc=toR.height/frR.height;
 
-    // Slow, elegant travel: 1.8s
-    introTitle.style.transition=
-        'transform 1.8s cubic-bezier(0.16,1,0.3,1), opacity 0.6s ease 1.2s';
+    // Travel over 1.8s – no opacity change, title stays visible the whole trip
+    introTitle.style.transition='transform 1.8s cubic-bezier(0.16,1,0.3,1)';
     introTitle.style.transformOrigin='center center';
-    introTitle.style.transform=
-        `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${sc})`;
-    introTitle.style.opacity='0'; // fades near end of travel
+    introTitle.style.transform=`translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${sc})`;
 
-    // Intro overlay fades with the travel
-    introEl.classList.add('fading');
+    // At 80% of travel (1440ms), fade in the real nav-logo and fade out the floating title
+    setTimeout(()=>{
+        navLogo.classList.add('visible');           // real logo appears at destination
+        introTitle.style.transition+= ', opacity 0.4s ease';
+        introTitle.style.opacity='0';               // floating title fades out
+    },1440);
 
 },3200);
 
-// t=3200+1800=5000ms — title has landed, swap to real nav-logo
+// t=3200+1800=5000 : travel done, house waits 1s then fades out
 setTimeout(()=>{
-    navLogo.classList.add('visible');
     introTitle.style.display='none';
-
-    // House waits 1 extra second before fading
     setTimeout(()=>{
-        introHouse.style.opacity='0';
-
-        // After house gone: reveal hero & page
+        introHouse.style.opacity='0';              // house fades after 1s wait
         setTimeout(()=>{
-            introEl.classList.add('gone');
-            heroText.style.transition='opacity 1s ease';
-            heroText.style.opacity='1';
-            scrollHint.style.transition='opacity 1s ease 0.3s';
-            scrollHint.style.opacity='1';
-            navContact.classList.add('visible');
-            mainContent.classList.add('visible');
-            document.body.classList.add('unlocked');
-        },700);
-    },1000);
-
+            introEl.classList.add('fading');       // overlay fades
+            setTimeout(()=>{
+                introEl.classList.add('gone');
+                // Show hero content
+                heroText.style.transition  ='opacity 1s ease';
+                heroText.style.opacity     ='1';
+                scrollHint.style.transition='opacity 1s ease 0.3s';
+                scrollHint.style.opacity   ='1';
+                navContact.classList.add('visible');
+                mainContent.classList.add('visible');
+                document.body.classList.add('unlocked');
+            },800);
+        },700);   // start overlay fade 700ms after house starts fading
+    },1000);      // house waits 1 extra second
 },5000);
 
-// ── SCROLL STATE ─────────────────────────────────────────────
+// ── HERO SCROLL (locked) ─────────────────────────────────────
 const VH=window.innerHeight;
 let accumulated=0;
 let heroLocked=true;
-let smTarget=0, smCurrent=0;
-let progScroll=false; // flag: scrollTo called by us
 
 function setHeroProgress(p){
     p=Math.max(0,Math.min(p,1));
-    const tP=Math.min(p/0.70,1);          // text: fade out by 70% of scroll
-    heroText.style.opacity=String(1-tP);
-    scrollHint.style.opacity=String(Math.max(0,1-p*5));
-    const iP=Math.max(0,(p-0.30)/0.70);   // image: fade in from 30% onward
-    heroBg.style.opacity=String(Math.min(iP*0.9,0.85));
-    heroBg.style.transform=`scale(${1.04-p*0.04})`;
+    // Text fades out over first 75%
+    const tP=Math.min(p/0.75,1);
+    heroText.style.opacity    =String(1-tP);
+    scrollHint.style.opacity  =String(Math.max(0,1-p*5));
+    // Image fades in from 25% onward
+    const iP=Math.max(0,(p-0.25)/0.75);
+    heroBg.style.opacity   =String(Math.min(iP*0.9,0.85));
+    heroBg.style.transform =`scale(${1.04-p*0.04})`;
 }
 
-// Single wheel handler
+// All wheel events go through one handler
 document.addEventListener('wheel',e=>{
+    // Never interfere when lightbox is open
+    if(lightbox.classList.contains('open')) return;
+
     if(heroLocked){
         e.preventDefault();
         accumulated=Math.max(0,Math.min(accumulated+e.deltaY,VH));
         setHeroProgress(accumulated/VH);
-        if(accumulated>=VH){ heroLocked=false; smTarget=0; smCurrent=0; }
+        if(accumulated>=VH) heroLocked=false;
         return;
     }
-    // Normal smooth scroll
+
+    // Smooth page scroll when hero is unlocked
     e.preventDefault();
     smTarget=Math.max(0,Math.min(
         smTarget+e.deltaY*0.85,
         document.body.scrollHeight-window.innerHeight
     ));
-},{passive:false});
+},{ passive:false, capture:true });
 
-// Touch hero support
-let tY0=0;
-window.addEventListener('touchstart',e=>{tY0=e.touches[0].clientY;},{passive:true});
-window.addEventListener('touchmove',e=>{
-    if(!heroLocked) return;
-    e.preventDefault();
-    const d=tY0-e.touches[0].clientY; tY0=e.touches[0].clientY;
-    accumulated=Math.max(0,Math.min(accumulated+d,VH));
-    setHeroProgress(accumulated/VH);
-    if(accumulated>=VH){ heroLocked=false; smTarget=0; smCurrent=0; }
-},{passive:false});
-
-// Detect user scrolling back to top (scrollbar/keyboard)
+// Re-lock hero when user scrolls back to very top
 window.addEventListener('scroll',()=>{
-    if(progScroll) return;
     if(!heroLocked && window.scrollY===0 && smTarget>50){
         heroLocked=true;
         accumulated=VH;
         smTarget=0; smCurrent=0;
-        setHeroProgress(1); // freeze hero at end state until they scroll back up
     }
 });
 
-// Smooth scroll loop
-(function loop(){
+// Touch for hero
+let tY0=0;
+window.addEventListener('touchstart',e=>{ tY0=e.touches[0].clientY; },{ passive:true });
+window.addEventListener('touchmove',e=>{
+    if(!heroLocked||lightbox.classList.contains('open'))return;
+    e.preventDefault();
+    const d=tY0-e.touches[0].clientY; tY0=e.touches[0].clientY;
+    accumulated=Math.max(0,Math.min(accumulated+d,VH));
+    setHeroProgress(accumulated/VH);
+    if(accumulated>=VH) heroLocked=false;
+},{ passive:false });
+
+// ── SMOOTH PAGE SCROLL ───────────────────────────────────────
+let smTarget=0, smCurrent=0;
+(function smoothLoop(){
     if(!heroLocked){
         const diff=smTarget-smCurrent;
         if(Math.abs(diff)>0.1){
             smCurrent+=diff*0.09;
-            progScroll=true;
             window.scrollTo(0,smCurrent);
-            progScroll=false;
         }
     }
-    requestAnimationFrame(loop);
+    requestAnimationFrame(smoothLoop);
 })();
 
 // ── SCROLL REVEAL ────────────────────────────────────────────
 const obs=new IntersectionObserver(entries=>{
-    entries.forEach(e=>{if(e.isIntersecting) e.target.classList.add('visible');});
-},{threshold:0.1});
+    entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+},{ threshold:0.1 });
 document.querySelectorAll('.tjeneste-item,.portfolio-card').forEach(el=>obs.observe(el));
 </script>
 </body>
