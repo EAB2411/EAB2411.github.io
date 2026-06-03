@@ -10,7 +10,6 @@
         * { margin:0; padding:0; box-sizing:border-box; }
         html,body { height:100%; }
         body { background:var(--black); color:var(--white); font-family:'Montserrat',sans-serif; font-weight:300; cursor:none; overflow:hidden; }
-        body.unlocked { overflow-y:auto; }
 
         /* CURSOR */
         .cursor { width:8px; height:8px; background:var(--white); border-radius:50%; position:fixed; top:0; left:0; pointer-events:none; z-index:9999; transition:transform 0.15s ease; }
@@ -19,22 +18,14 @@
         /* INTRO OVERLAY */
         #intro { position:fixed; inset:0; background:var(--black); z-index:600; transition:opacity 0.8s ease; pointer-events:none; }
         #intro.fading { opacity:0; }
-        #intro.gone   { display:none; }
+        #intro.gone { display:none; }
 
         /* FLOATING TITLE */
-        #intro-title {
-            position:fixed; left:50%; top:50%;
-            transform:translate(-50%,-50%);
-            font-family:'Cormorant Garamond',serif;
-            font-size:clamp(3rem,8vw,7rem);
-            font-weight:300; letter-spacing:8px;
-            text-transform:uppercase; white-space:nowrap;
-            z-index:700; opacity:0; pointer-events:none;
-        }
+        #intro-title { position:fixed; left:50%; top:50%; transform:translate(-50%,-50%); font-family:'Cormorant Garamond',serif; font-size:clamp(3rem,8vw,7rem); font-weight:300; letter-spacing:8px; text-transform:uppercase; white-space:nowrap; z-index:700; opacity:0; pointer-events:none; }
 
         /* FLOATING HOUSE */
         #intro-house { position:fixed; left:50%; top:50%; transform:translate(-50%,70px); z-index:700; opacity:0; transition:opacity 0.7s ease; pointer-events:none; }
-        #house-path  { stroke-dasharray:300; stroke-dashoffset:300; }
+        #house-path { stroke-dasharray:300; stroke-dashoffset:300; }
 
         /* NAV */
         nav { position:fixed; top:0; left:0; right:0; z-index:500; padding:2rem 3rem; display:grid; grid-template-columns:1fr auto 1fr; align-items:center; }
@@ -42,9 +33,9 @@
         #nav-logo.visible { opacity:1; visibility:visible; }
         .nav-links { display:flex; gap:2.5rem; align-items:center; justify-content:center; opacity:0; transition:opacity 0.8s ease; }
         .nav-links.visible { opacity:1; }
-        .nav-links a { color:var(--white); text-decoration:none; font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; opacity:0.7; transition:opacity 0.3s; }
+        .nav-links a { color:var(--white); text-decoration:none; font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; opacity:0.6; transition:opacity 0.3s; }
         .nav-links a:hover { opacity:1; }
-        .nav-contact { display:inline-block; padding:0.6rem 1.6rem; border:1px solid rgba(240,237,232,0.5); color:var(--white); text-decoration:none; font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; opacity:0; transition:opacity 0.8s ease,background 0.3s,color 0.3s; justify-self:end; }
+        .nav-contact { display:inline-block; padding:0.6rem 1.6rem; border:1px solid rgba(240,237,232,0.4); color:var(--white); text-decoration:none; font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; opacity:0; transition:opacity 0.8s ease,background 0.3s,color 0.3s; justify-self:end; }
         .nav-contact.visible { opacity:1; }
         .nav-contact:hover { background:var(--white); color:var(--black); }
 
@@ -54,42 +45,73 @@
         .hero-overlay { position:absolute; inset:0; background:linear-gradient(to bottom,rgba(8,8,8,0.2),rgba(8,8,8,0.55)); pointer-events:none; }
         #hero-text { position:relative; text-align:center; z-index:2; opacity:0; pointer-events:none; }
         #hero-text h1 { font-family:'Cormorant Garamond',serif; font-size:clamp(3rem,8vw,7rem); font-weight:300; letter-spacing:8px; text-transform:uppercase; line-height:1; margin-bottom:1rem; }
-        #hero-text p  { font-size:0.85rem; letter-spacing:4px; text-transform:uppercase; color:var(--accent); }
+        #hero-text p { font-size:0.85rem; letter-spacing:4px; text-transform:uppercase; color:var(--accent); }
         #scroll-hint { position:absolute; bottom:2.5rem; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:0.5rem; z-index:2; opacity:0; pointer-events:none; }
         #scroll-hint span { font-size:0.6rem; letter-spacing:3px; text-transform:uppercase; color:var(--grey); }
         .scroll-line { width:1px; height:40px; background:linear-gradient(to bottom,var(--accent),transparent); animation:scrollPulse 2s ease infinite; }
 
-        /* MAIN CONTENT */
-        #main-content { position:relative; z-index:2; margin-top:100vh; background:var(--black); opacity:0; transition:opacity 0.8s ease; }
-        #main-content.visible { opacity:1; }
+        /* MAIN CONTENT – each section is one full page */
+        #main-content { position:relative; z-index:2; margin-top:100vh; background:var(--black); }
+
+        /* ALL SECTIONS – full viewport height, content centered */
+        #main-content section {
+            height:100vh;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            border-top:1px solid #1e1e1e;
+            opacity:0;
+            transition:opacity 0.8s ease;
+        }
+        #main-content section.visible { opacity:1; }
+
+        .section-inner { width:100%; max-width:1000px; padding:0 4rem; }
+
+        /* SECTION LABEL */
+        .section-label { font-size:0.7rem; letter-spacing:4px; text-transform:uppercase; color:var(--accent); margin-bottom:2.5rem; display:flex; align-items:center; gap:1rem; }
+        .section-label::after { content:''; display:block; height:1px; width:50px; background:var(--accent); opacity:0.4; }
 
         /* OM MEG */
-        .om-meg { padding:8rem 3rem; max-width:1000px; margin:0 auto; }
-        .om-meg-grid { display:grid; grid-template-columns:1fr 1.6fr; gap:5rem; align-items:start; padding-top:3rem; border-top:1px solid #2a2a2a; }
-        .om-meg-heading { font-family:'Cormorant Garamond',serif; font-size:clamp(2.5rem,4vw,3.5rem); font-weight:300; letter-spacing:2px; line-height:1.1; position:sticky; top:8rem; }
-        .om-meg-body p { color:var(--grey); line-height:1.9; font-size:0.95rem; margin-bottom:1.5rem; }
+        .om-meg-grid { display:grid; grid-template-columns:1fr 1.8fr; gap:4rem; align-items:center; padding-top:2.5rem; border-top:1px solid #2a2a2a; }
+        .om-meg-heading { font-family:'Cormorant Garamond',serif; font-size:clamp(2.5rem,4vw,4rem); font-weight:300; letter-spacing:2px; line-height:1.05; }
+        .om-meg-body p { color:var(--grey); line-height:1.9; font-size:0.9rem; margin-bottom:1.2rem; }
         .om-meg-body p:last-child { margin-bottom:0; }
 
         /* TJENESTER */
-        .tjenester { padding:8rem 3rem; max-width:1000px; margin:0 auto; }
-        .section-label { font-size:0.75rem; letter-spacing:4px; text-transform:uppercase; color:var(--accent); margin-bottom:3rem; display:flex; align-items:center; gap:1rem; }
-        .section-label::after { content:''; display:block; height:1px; width:60px; background:var(--accent); opacity:0.5; }
-        .tjeneste-item { padding:3rem 0; border-top:1px solid #2a2a2a; display:grid; grid-template-columns:1fr 2fr; gap:3rem; align-items:start; opacity:0; transform:translateY(20px); transition:opacity 0.7s ease,transform 0.7s ease; }
-        .tjeneste-item.visible { opacity:1; transform:translateY(0); }
-        .tjeneste-num { font-family:'Cormorant Garamond',serif; font-size:4rem; color:#777; line-height:1; }
-        .tjeneste-content h3 { font-family:'Cormorant Garamond',serif; font-size:2.2rem; font-weight:400; margin-bottom:1rem; letter-spacing:1px; }
+        .tjeneste-item { padding-top:2.5rem; border-top:1px solid #2a2a2a; display:grid; grid-template-columns:1fr 2fr; gap:3rem; align-items:start; }
+        .tjeneste-num { font-family:'Cormorant Garamond',serif; font-size:5rem; color:#555; line-height:1; }
+        .tjeneste-content h3 { font-family:'Cormorant Garamond',serif; font-size:2.5rem; font-weight:400; margin-bottom:1rem; letter-spacing:1px; }
         .tjeneste-content p { color:var(--grey); line-height:1.9; font-size:0.95rem; }
 
-        /* PORTFOLIO */
-        .portfolio-main { padding:8rem 3rem; border-top:1px solid #2a2a2a; }
-        .portfolio-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.2rem; margin-top:3rem; }
-        .pg-card { position:relative; overflow:hidden; cursor:pointer; opacity:0; transform:translateY(20px); transition:opacity 0.6s ease,transform 0.6s ease; }
-        .pg-card.visible { opacity:1; transform:translateY(0); }
-        .pg-card img { width:100%; aspect-ratio:4/3; object-fit:cover; display:block; transition:transform 0.7s cubic-bezier(0.16,1,0.3,1); pointer-events:none; }
-        .pg-card:hover img { transform:scale(1.03); }
-        .pg-card-overlay { position:absolute; bottom:0; left:0; right:0; padding:1.5rem 1.2rem 1.2rem; background:linear-gradient(to top,rgba(8,8,8,0.85),transparent); }
-        .pg-card-title { font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:400; letter-spacing:1px; margin-bottom:0.2rem; }
-        .pg-card-sub { font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; color:var(--accent); }
+        /* PORTFOLIO – 2×2 grid */
+        .section-inner--wide { max-width:1100px; }
+        .portfolio-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:0.9rem; margin-top:2rem; }
+        .pg-card { position:relative; overflow:hidden; cursor:pointer; }
+        .pg-card img { width:100%; aspect-ratio:16/9; object-fit:cover; display:block; transition:transform 0.7s cubic-bezier(0.16,1,0.3,1); pointer-events:none; }
+        .pg-card:hover img { transform:scale(1.04); }
+        .pg-card-overlay { position:absolute; bottom:0; left:0; right:0; padding:1.2rem 1rem 0.9rem; background:linear-gradient(to top,rgba(8,8,8,0.85),transparent); }
+        .pg-card-title { font-family:'Cormorant Garamond',serif; font-size:1rem; font-weight:400; letter-spacing:1px; margin-bottom:0.2rem; }
+        .pg-card-sub { font-size:0.65rem; letter-spacing:2px; text-transform:uppercase; color:var(--accent); }
+
+        /* KONTAKT */
+        .kontakt-center { text-align:center; }
+        .kontakt-center .section-label { justify-content:center; }
+        .kontakt h2 { font-family:'Cormorant Garamond',serif; font-size:clamp(2.5rem,5vw,4.5rem); font-weight:300; letter-spacing:3px; margin-bottom:1.5rem; line-height:1.05; }
+        .kontakt p { color:var(--grey); font-size:0.9rem; line-height:1.9; margin-bottom:3rem; }
+        .kontakt-btn { display:inline-block; padding:1.1rem 3rem; border:1px solid var(--accent); color:var(--white); text-decoration:none; font-size:0.75rem; letter-spacing:3px; text-transform:uppercase; position:relative; overflow:hidden; }
+        .kontakt-btn::before { content:''; position:absolute; inset:0; background:var(--accent); transform:translateX(-100%); transition:transform 0.4s ease; z-index:-1; }
+        .kontakt-btn:hover::before { transform:translateX(0); }
+        .kontakt-btn:hover { color:var(--black); }
+        .kontakt-footer { margin-top:4rem; padding-top:2rem; border-top:1px solid #1e1e1e; display:flex; justify-content:space-between; }
+        .kontakt-footer p { font-size:0.7rem; color:#444; letter-spacing:1px; }
+
+        /* SECTION DOTS (right side) */
+        #section-dots { position:fixed; right:2rem; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:10px; z-index:400; opacity:0; transition:opacity 0.5s ease; }
+        #section-dots.visible { opacity:1; }
+        .sdot { width:5px; height:5px; border-radius:50%; background:rgba(240,237,232,0.25); cursor:pointer; transition:background 0.3s,transform 0.3s; }
+        .sdot.active { background:var(--accent); transform:scale(1.4); }
+        .sdot:hover { background:rgba(240,237,232,0.6); }
 
         /* LIGHTBOX */
         #lightbox { position:fixed; inset:0; background:rgba(8,8,8,0.97); z-index:800; display:none; flex-direction:column; align-items:center; justify-content:center; }
@@ -98,39 +120,24 @@
         #lightbox-close:hover { opacity:1; }
         #lightbox-title { position:absolute; top:2rem; left:2.5rem; font-family:'Cormorant Garamond',serif; font-size:1.4rem; font-weight:400; letter-spacing:2px; }
         #lightbox-img-wrap { width:100%; max-width:900px; padding:0 4rem; position:relative; }
-        #lightbox-img { width:100%; max-height:70vh; object-fit:contain; display:block; transition:opacity 0.15s ease; }
+        #lightbox-img { width:100%; max-height:70vh; object-fit:contain; display:block; transition:opacity 0.2s ease; }
         #lightbox-img.fade { opacity:0; }
         #lightbox-prev,#lightbox-next { position:absolute; top:50%; transform:translateY(-50%); background:none; border:1px solid rgba(240,237,232,0.3); color:var(--white); width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:none; transition:background 0.3s,border-color 0.3s; }
         #lightbox-prev { left:0; } #lightbox-next { right:0; }
         #lightbox-prev:hover,#lightbox-next:hover { background:rgba(240,237,232,0.1); border-color:var(--accent); }
         #lightbox-counter { margin-top:1.5rem; font-size:0.7rem; letter-spacing:3px; color:var(--grey); }
-        #lightbox-hint { margin-top:0.6rem; font-size:0.65rem; letter-spacing:2px; color:#555; text-transform:uppercase; }
-
-        /* KONTAKT */
-        .kontakt { padding:8rem 3rem; text-align:center; border-top:1px solid #2a2a2a; }
-        .kontakt-inner { max-width:600px; margin:0 auto; }
-        .kontakt h2 { font-family:'Cormorant Garamond',serif; font-size:clamp(2.5rem,5vw,4rem); font-weight:300; letter-spacing:3px; margin-bottom:1.5rem; line-height:1.1; }
-        .kontakt p { color:var(--grey); font-size:0.95rem; line-height:1.9; margin-bottom:3rem; }
-        .kontakt-btn { display:inline-block; padding:1.1rem 3rem; border:1px solid var(--accent); color:var(--white); text-decoration:none; font-size:0.75rem; letter-spacing:3px; text-transform:uppercase; position:relative; overflow:hidden; }
-        .kontakt-btn::before { content:''; position:absolute; inset:0; background:var(--accent); transform:translateX(-100%); transition:transform 0.4s ease; z-index:-1; }
-        .kontakt-btn:hover::before { transform:translateX(0); }
-        .kontakt-btn:hover { color:var(--black); }
-
-        footer { padding:2rem 3rem; border-top:1px solid #2a2a2a; display:flex; justify-content:space-between; align-items:center; }
-        footer p { font-size:0.75rem; color:#666; letter-spacing:1px; }
 
         @keyframes scrollPulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
 
-        @media(max-width:560px){ .nav-links{display:none} }
         @media(max-width:768px){
             nav{padding:1.5rem}
-            .tjeneste-item{grid-template-columns:1fr;gap:1rem}
+            .nav-links{display:none}
+            .section-inner{padding:0 1.5rem}
             .om-meg-grid{grid-template-columns:1fr;gap:2rem}
-            .om-meg-heading{position:static}
+            .tjeneste-item{grid-template-columns:1fr;gap:1rem}
             .portfolio-grid{grid-template-columns:1fr}
-            .tjenester,.kontakt,.om-meg,.portfolio-main{padding:5rem 1.5rem}
-            footer{flex-direction:column;gap:1rem;text-align:center}
             #lightbox-img-wrap{padding:0 3rem}
+            #section-dots{right:1rem}
         }
     </style>
 </head>
@@ -139,6 +146,7 @@
 <div class="cursor" id="cursor"></div>
 <div class="cursor-ring" id="cursorRing"></div>
 
+<!-- INTRO -->
 <div id="intro"></div>
 <div id="intro-title">Berg Boligfoto</div>
 <div id="intro-house">
@@ -169,50 +177,69 @@
 </div>
 
 <div id="main-content">
-    <section class="om-meg" id="om-meg">
-        <div class="section-label">Om Meg</div>
-        <div class="om-meg-grid">
-            <h2 class="om-meg-heading">Bak<br>linsen</h2>
-            <div class="om-meg-body">
-                <p>Jeg heter [Navn] og er fotografen bak Berg Boligfoto. Med base i Levanger har jeg de siste årene spesialisert meg på eiendomsfotografi – et håndverk som kombinerer teknisk presisjon med et øye for det vakre i hverdagslige rom.</p>
-                <p>Hver bolig har sin egen personlighet og sine egne kvaliteter. Mitt mål er å finne dem – enten det er lyset som faller inn gjennom et vindu om morgenen, et kjøkken som inviterer til samvær, eller en hage som forteller om årstidene.</p>
-                <p>Jeg jobber alltid grundig og tar meg tid til å forstå boligen og dine ønsker før jeg begynner å fotografere. Resultatet er bilder som ikke bare ser bra ut på skjerm, men som skaper en reell følelsesmessig respons hos potensielle kjøpere.</p>
-                <p>Ta gjerne kontakt for en uforpliktende prat om ditt prosjekt.</p>
+
+    <!-- OM MEG -->
+    <section id="om-meg">
+        <div class="section-inner">
+            <div class="section-label">Om Meg</div>
+            <div class="om-meg-grid">
+                <h2 class="om-meg-heading">Bak<br>linsen</h2>
+                <div class="om-meg-body">
+                    <p>Jeg heter [Navn] og er fotografen bak Berg Boligfoto. Med base i Levanger har jeg spesialisert meg på eiendomsfotografi – et håndverk som kombinerer teknisk presisjon med et øye for det vakre i hverdagslige rom.</p>
+                    <p>Hver bolig har sin egen personlighet. Mitt mål er å finne den – enten det er lyset som faller inn gjennom et vindu om morgenen, et kjøkken som inviterer til samvær, eller en hage som forteller om årstidene.</p>
+                    <p>Ta gjerne kontakt for en uforpliktende prat om ditt prosjekt.</p>
+                </div>
             </div>
         </div>
     </section>
 
-    <section class="tjenester" id="tjenester">
-        <div class="section-label">Tjenester</div>
-        <div class="tjeneste-item">
-            <div class="tjeneste-num">01</div>
-            <div class="tjeneste-content">
-                <h3>Boligfotografi</h3>
-                <p>Profesjonelle bilder som fremhever boligens beste sider. Med riktig lys, komposisjon og etterbehandling presenteres boligen på sitt beste – og skaper en sterkere første inntrykk hos potensielle kjøpere.</p>
+    <!-- TJENESTER -->
+    <section id="tjenester">
+        <div class="section-inner">
+            <div class="section-label">Tjenester</div>
+            <div class="tjeneste-item">
+                <div class="tjeneste-num">01</div>
+                <div class="tjeneste-content">
+                    <h3>Boligfotografi</h3>
+                    <p>Profesjonelle bilder som fremhever boligens beste sider. Med riktig lys, komposisjon og etterbehandling presenteres boligen på sitt beste – og skaper en sterkere første inntrykk hos potensielle kjøpere.</p>
+                </div>
             </div>
         </div>
     </section>
 
-    <section class="portfolio-main" id="portfolio">
-        <div class="section-label">Portefølje</div>
-        <div class="portfolio-grid" id="portfolioGrid"></div>
+    <!-- PORTEFØLJE -->
+    <section id="portfolio">
+        <div class="section-inner section-inner--wide">
+            <div class="section-label">Portefølje</div>
+            <div class="portfolio-grid" id="portfolioGrid"></div>
+        </div>
     </section>
 
-    <section class="kontakt" id="kontakt">
-        <div class="kontakt-inner">
+    <!-- KONTAKT -->
+    <section id="kontakt">
+        <div class="section-inner kontakt-center">
             <div class="section-label" style="justify-content:center">Kontakt</div>
-            <h2>La oss skape noe bra sammen</h2>
-            <p>Ta kontakt for pristilbud eller spørsmål. Jeg dekker Levanger og omkringliggende kommuner.</p>
+            <h2 class="kontakt">La oss skape<br>noe bra sammen</h2>
+            <p class="kontakt">Ta kontakt for pristilbud eller spørsmål. Jeg dekker Levanger og omkringliggende kommuner.</p>
             <a href="mailto:hei@bergboligfoto.no" class="kontakt-btn">Send en melding</a>
+            <div class="kontakt-footer">
+                <p>© 2025 Berg Boligfoto</p>
+                <p>Levanger, Trøndelag</p>
+            </div>
         </div>
     </section>
 
-    <footer>
-        <p>© 2025 Berg Boligfoto</p>
-        <p>Levanger, Trøndelag</p>
-    </footer>
 </div>
 
+<!-- SECTION DOTS -->
+<div id="section-dots">
+    <div class="sdot" data-idx="0" title="Om Meg"></div>
+    <div class="sdot" data-idx="1" title="Tjenester"></div>
+    <div class="sdot" data-idx="2" title="Portefølje"></div>
+    <div class="sdot" data-idx="3" title="Kontakt"></div>
+</div>
+
+<!-- LIGHTBOX -->
 <div id="lightbox">
     <div id="lightbox-title"></div>
     <button id="lightbox-close">Lukk</button>
@@ -222,28 +249,23 @@
         <button id="lightbox-next"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9,6 15,12 9,18"/></svg></button>
     </div>
     <div id="lightbox-counter"></div>
-    <div id="lightbox-hint">Scroll eller bruk piltaster for å bla</div>
 </div>
 
 <script>
 // ── CURSOR ───────────────────────────────────────────────────
-const cursorEl = document.getElementById('cursor');
-const ringEl   = document.getElementById('cursorRing');
+const cursorEl=document.getElementById('cursor');
+const ringEl  =document.getElementById('cursorRing');
 let mX=0,mY=0,rX=0,rY=0;
 document.addEventListener('mousemove',e=>{
     mX=e.clientX; mY=e.clientY;
     cursorEl.style.left=(mX-4)+'px'; cursorEl.style.top=(mY-4)+'px';
 });
-(function loopRing(){
-    rX+=(mX-rX-16)*0.12; rY+=(mY-rY-16)*0.12;
-    ringEl.style.left=rX+'px'; ringEl.style.top=rY+'px';
-    requestAnimationFrame(loopRing);
-})();
+(function loopRing(){ rX+=(mX-rX-16)*0.12; rY+=(mY-rY-16)*0.12; ringEl.style.left=rX+'px'; ringEl.style.top=rY+'px'; requestAnimationFrame(loopRing); })();
 function addHover(el){
     el.addEventListener('mouseenter',()=>cursorEl.style.transform='scale(3)');
     el.addEventListener('mouseleave',()=>cursorEl.style.transform='scale(1)');
 }
-document.querySelectorAll('a,button').forEach(addHover);
+document.querySelectorAll('a,button,.sdot').forEach(addHover);
 
 // ── PORTFOLIO DATA ───────────────────────────────────────────
 const projects=[
@@ -271,29 +293,28 @@ const projects=[
               'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1200&q=80']}
 ];
 
-const portfolioGrid=document.getElementById('portfolioGrid');
+const pgGrid=document.getElementById('portfolioGrid');
 projects.forEach((p,i)=>{
     const card=document.createElement('div');
     card.className='pg-card';
-    card.innerHTML=`
-        <img src="${p.cover}" alt="${p.title}" loading="lazy" draggable="false">
+    card.innerHTML=`<img src="${p.cover}" alt="${p.title}" loading="lazy" draggable="false">
         <div class="pg-card-overlay">
             <div class="pg-card-title">${p.title}</div>
             <div class="pg-card-sub">${p.sub}</div>
         </div>`;
     card.addEventListener('click',()=>openLightbox(i));
     addHover(card);
-    portfolioGrid.appendChild(card);
+    pgGrid.appendChild(card);
 });
 
-// ── LIGHTBOX ─────────────────────────────────────────────────
-const lightbox  =document.getElementById('lightbox');
-const lbImg     =document.getElementById('lightbox-img');
-const lbTitle   =document.getElementById('lightbox-title');
-const lbCounter =document.getElementById('lightbox-counter');
-const lbPrev    =document.getElementById('lightbox-prev');
-const lbNext    =document.getElementById('lightbox-next');
-const lbClose   =document.getElementById('lightbox-close');
+// ── LIGHTBOX (arrows only, no scroll) ────────────────────────
+const lightbox =document.getElementById('lightbox');
+const lbImg    =document.getElementById('lightbox-img');
+const lbTitle  =document.getElementById('lightbox-title');
+const lbCounter=document.getElementById('lightbox-counter');
+const lbPrev   =document.getElementById('lightbox-prev');
+const lbNext   =document.getElementById('lightbox-next');
+const lbClose  =document.getElementById('lightbox-close');
 let lbProj=0,lbIdx=0;
 
 function openLightbox(idx){ lbProj=idx; lbIdx=0; renderLb(0); lightbox.classList.add('open'); }
@@ -302,7 +323,7 @@ function renderLb(dir){
     const p=projects[lbProj];
     lbTitle.textContent=p.title;
     lbCounter.textContent=(lbIdx+1)+' / '+p.images.length;
-    if(dir!==0){ lbImg.classList.add('fade'); setTimeout(()=>{ lbImg.src=p.images[lbIdx]; lbImg.classList.remove('fade'); },150); }
+    if(dir!==0){ lbImg.classList.add('fade'); setTimeout(()=>{ lbImg.src=p.images[lbIdx]; lbImg.classList.remove('fade'); },200); }
     else lbImg.src=p.images[lbIdx];
 }
 function lbGoNext(){ lbIdx=(lbIdx+1)%projects[lbProj].images.length; renderLb(1); }
@@ -312,7 +333,6 @@ lbClose.addEventListener('click',closeLightbox);
 lbNext.addEventListener('click',lbGoNext);
 lbPrev.addEventListener('click',lbGoPrev);
 lightbox.addEventListener('click',e=>{ if(e.target===lightbox)closeLightbox(); });
-lightbox.addEventListener('wheel',e=>{ e.preventDefault(); e.stopPropagation(); if(e.deltaY>0)lbGoNext(); else lbGoPrev(); },{passive:false});
 document.addEventListener('keydown',e=>{
     if(!lightbox.classList.contains('open'))return;
     if(e.key==='ArrowRight'||e.key==='ArrowDown')lbGoNext();
@@ -331,15 +351,11 @@ const heroText   =document.getElementById('hero-text');
 const scrollHint =document.getElementById('scroll-hint');
 const mainContent=document.getElementById('main-content');
 const heroBg     =document.getElementById('hero-bg');
+const sectionDots=document.getElementById('section-dots');
 
 // ── INTRO SEQUENCE ───────────────────────────────────────────
-// t=150ms: title fades in
-setTimeout(()=>{
-    introTitle.style.transition='opacity 0.9s ease';
-    introTitle.style.opacity='1';
-},150);
+setTimeout(()=>{ introTitle.style.transition='opacity 0.9s ease'; introTitle.style.opacity='1'; },150);
 
-// t=1400ms: house fades in and draws
 setTimeout(()=>{
     introHouse.style.opacity='1';
     const path=document.getElementById('house-path');
@@ -347,10 +363,8 @@ setTimeout(()=>{
     path.style.strokeDashoffset='0';
 },1400);
 
-// t=3200ms: title travels to nav corner
 setTimeout(()=>{
-    navLogo.style.visibility='visible';
-    navLogo.style.opacity='0';
+    navLogo.style.visibility='visible'; navLogo.style.opacity='0';
     const toR=navLogo.getBoundingClientRect();
     const frR=introTitle.getBoundingClientRect();
     const dx=(toR.left+toR.width/2)-(frR.left+frR.width/2);
@@ -361,7 +375,6 @@ setTimeout(()=>{
     introTitle.style.transform=`translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${sc})`;
 },3200);
 
-// t=5000ms: title has arrived – house waits 1s then fades, overlay lifts
 setTimeout(()=>{
     setTimeout(()=>{
         introHouse.style.opacity='0';
@@ -369,19 +382,16 @@ setTimeout(()=>{
             introEl.classList.add('fading');
             setTimeout(()=>{
                 introEl.classList.add('gone');
-                // Swap floating title for real nav-logo
-                navLogo.style.opacity='1';
-                navLogo.classList.add('visible');
+                navLogo.style.opacity='1'; navLogo.classList.add('visible');
                 introTitle.style.display='none';
-                // Reveal page
                 heroText.style.transition  ='opacity 1s ease';
                 heroText.style.opacity     ='1';
                 scrollHint.style.transition='opacity 1s ease 0.3s';
                 scrollHint.style.opacity   ='1';
                 navContact.classList.add('visible');
                 navLinks.classList.add('visible');
-                mainContent.classList.add('visible');
-                document.body.classList.add('unlocked');
+                // Make sections visible (they fade in on first view)
+                document.querySelectorAll('#main-content section').forEach(s=>s.classList.add('visible'));
             },800);
         },500);
     },1000);
@@ -391,9 +401,70 @@ setTimeout(()=>{
 const VH=window.innerHeight;
 let accumulated=0;
 let heroLocked=true;
-let smTarget=0, smCurrent=0;
-let isProg=false; // flag: we called scrollTo ourselves
 
+// Smooth scroll
+let smTarget=0, smCurrent=0;
+let isProg=false;
+
+(function smoothLoop(){
+    const diff=smTarget-smCurrent;
+    if(Math.abs(diff)>0.1){
+        smCurrent+=diff*0.1;
+        isProg=true;
+        window.scrollTo(0,smCurrent);
+        isProg=false;
+    }
+    requestAnimationFrame(smoothLoop);
+})();
+
+// ── SECTION SNAPPING ─────────────────────────────────────────
+const SECTION_IDS=['om-meg','tjenester','portfolio','kontakt'];
+let sectionPos=[];     // filled after intro
+let currentSec=0;
+let isSnapping=false;
+let wheelDelta=0;
+let wheelTimer=null;
+
+function computeSections(){
+    sectionPos=SECTION_IDS.map(id=>{
+        const el=document.getElementById(id);
+        return el ? Math.round(el.getBoundingClientRect().top+window.scrollY) : 0;
+    });
+}
+
+function snapTo(idx){
+    if(idx<0||idx>=SECTION_IDS.length)return;
+    currentSec=idx;
+    smTarget=sectionPos[idx];
+    isSnapping=true;
+    updateDots();
+    setTimeout(()=>{ isSnapping=false; },800);
+}
+
+function updateDots(){
+    document.querySelectorAll('.sdot').forEach((d,i)=>{
+        d.classList.toggle('active',i===currentSec);
+    });
+}
+
+function showDots(){
+    computeSections();
+    sectionDots.classList.add('visible');
+    updateDots();
+}
+
+function hideDots(){ sectionDots.classList.remove('visible'); }
+
+// Dot clicks
+document.querySelectorAll('.sdot').forEach((d,i)=>{
+    d.addEventListener('click',()=>{
+        if(heroLocked){ heroLocked=false; accumulated=VH; setHeroProgress(1); smTarget=0; smCurrent=0; }
+        setTimeout(()=>snapTo(i),heroLocked?0:50);
+        if(!sectionDots.classList.contains('visible'))showDots();
+    });
+});
+
+// ── HERO PROGRESS ─────────────────────────────────────────────
 function setHeroProgress(p){
     p=Math.max(0,Math.min(p,1));
     const tP=Math.min(p/0.85,1);
@@ -404,52 +475,62 @@ function setHeroProgress(p){
     heroBg.style.transform =`scale(${1.04-p*0.04})`;
 }
 
-// ── SMOOTH SCROLL LOOP ────────────────────────────────────────
-(function smoothLoop(){
-    if(!heroLocked){
-        const diff=smTarget-smCurrent;
-        if(Math.abs(diff)>0.1){
-            smCurrent+=diff*0.11;
-            isProg=true;
-            window.scrollTo(0,smCurrent);
-            isProg=false;
-        }
-    }
-    requestAnimationFrame(smoothLoop);
-})();
-
 // ── WHEEL HANDLER ─────────────────────────────────────────────
 document.addEventListener('wheel',e=>{
-    // Never intercept when lightbox is open
     if(lightbox.classList.contains('open'))return;
     e.preventDefault();
 
-    // Hero phase
+    // HERO PHASE
     if(heroLocked){
         accumulated=Math.max(0,Math.min(accumulated+e.deltaY,VH));
         setHeroProgress(accumulated/VH);
-        if(accumulated>=VH){ heroLocked=false; smTarget=0; smCurrent=0; }
+        if(accumulated>=VH){
+            heroLocked=false;
+            smTarget=0; smCurrent=0;
+            showDots();
+            snapTo(0);
+        }
         return;
     }
 
-    // Re-enter hero if scrolling above top
-    const proposed=smTarget+e.deltaY*0.85;
-    if(proposed<0 && smCurrent<5){
-        heroLocked=true; accumulated=VH; setHeroProgress(1);
-        smTarget=0; smCurrent=0;
-        return;
-    }
+    // SECTION SNAPPING PHASE
+    if(isSnapping)return;
 
-    // Normal smooth scroll
-    smTarget=Math.max(0,Math.min(proposed,document.documentElement.scrollHeight-window.innerHeight));
+    // Accumulate wheel delta (handles trackpads with small increments)
+    wheelDelta+=e.deltaY;
+    clearTimeout(wheelTimer);
+    wheelTimer=setTimeout(()=>{ wheelDelta=0; },200);
+    if(Math.abs(wheelDelta)<50)return;
+
+    const dir=wheelDelta>0?1:-1;
+    wheelDelta=0;
+
+    if(dir>0){
+        // Scroll down
+        if(currentSec<SECTION_IDS.length-1){
+            snapTo(currentSec+1);
+        }
+    } else {
+        // Scroll up
+        if(currentSec>0){
+            snapTo(currentSec-1);
+        } else {
+            // Back to hero
+            heroLocked=true;
+            accumulated=VH;
+            setHeroProgress(1);
+            smTarget=0; smCurrent=0;
+            hideDots();
+        }
+    }
 },{passive:false,capture:true});
 
-// Re-lock hero if user drags scrollbar to very top
+// Scrollbar sync
 window.addEventListener('scroll',()=>{
     if(isProg)return;
     if(!heroLocked && window.scrollY===0){
         heroLocked=true; accumulated=VH; setHeroProgress(1);
-        smTarget=0; smCurrent=0;
+        smTarget=0; smCurrent=0; hideDots();
     }
 });
 
@@ -457,34 +538,49 @@ window.addEventListener('scroll',()=>{
 let tY0=0;
 window.addEventListener('touchstart',e=>{ tY0=e.touches[0].clientY; },{passive:true});
 window.addEventListener('touchmove',e=>{
-    if(!heroLocked||lightbox.classList.contains('open'))return;
+    if(lightbox.classList.contains('open'))return;
     e.preventDefault();
     const d=tY0-e.touches[0].clientY; tY0=e.touches[0].clientY;
-    accumulated=Math.max(0,Math.min(accumulated+d,VH));
-    setHeroProgress(accumulated/VH);
-    if(accumulated>=VH) heroLocked=false;
+    if(heroLocked){
+        accumulated=Math.max(0,Math.min(accumulated+d,VH));
+        setHeroProgress(accumulated/VH);
+        if(accumulated>=VH){ heroLocked=false; smTarget=0; smCurrent=0; showDots(); snapTo(0); }
+    } else {
+        if(isSnapping)return;
+        if(Math.abs(d)<8)return;
+        if(d>0 && currentSec<SECTION_IDS.length-1) snapTo(currentSec+1);
+        else if(d<0 && currentSec>0) snapTo(currentSec-1);
+        else if(d<0 && currentSec===0){ heroLocked=true; accumulated=VH; setHeroProgress(1); smTarget=0; smCurrent=0; hideDots(); }
+    }
 },{passive:false});
 
-// ── NAV ANCHOR LINKS ──────────────────────────────────────────
-document.querySelectorAll('a[href^="#"]').forEach(a=>{
+// ── NAV LINKS ─────────────────────────────────────────────────
+document.querySelectorAll('.nav-links a, .nav-contact').forEach(a=>{
     a.addEventListener('click',e=>{
-        const id=a.getAttribute('href').slice(1);
-        if(!id)return;
+        const id=a.getAttribute('href');
+        if(!id||!id.startsWith('#'))return;
+        const sectionId=id.slice(1);
+        if(!sectionId)return;
         e.preventDefault();
         if(heroLocked){ heroLocked=false; accumulated=VH; setHeroProgress(1); smTarget=0; smCurrent=0; }
-        const target=document.getElementById(id);
-        if(!target)return;
-        requestAnimationFrame(()=>{
-            smTarget=Math.max(0,target.getBoundingClientRect().top+window.scrollY-80);
-        });
+        const idx=SECTION_IDS.indexOf(sectionId);
+        if(idx>=0){
+            if(!sectionDots.classList.contains('visible'))showDots();
+            setTimeout(()=>snapTo(idx),50);
+        }
     });
 });
 
-// ── SCROLL REVEAL ─────────────────────────────────────────────
-const obs=new IntersectionObserver(entries=>{
-    entries.forEach(e=>{ if(e.isIntersecting)e.target.classList.add('visible'); });
-},{threshold:0.1});
-document.querySelectorAll('.tjeneste-item,.pg-card').forEach(el=>obs.observe(el));
+// Nav logo scrolls back to hero
+document.getElementById('nav-logo').addEventListener('click',e=>{
+    e.preventDefault();
+    if(!heroLocked){
+        heroLocked=true; accumulated=0; setHeroProgress(0);
+        smTarget=0; smCurrent=0;
+        window.scrollTo(0,0);
+        hideDots();
+    }
+});
 </script>
 </body>
 </html>
