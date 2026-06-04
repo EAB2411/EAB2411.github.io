@@ -33,17 +33,17 @@
         #nav-logo.visible { opacity:1; visibility:visible; }
         .nav-links { display:flex; gap:2.5rem; align-items:center; justify-content:center; opacity:0; transition:opacity 0.8s ease; }
         .nav-links.visible { opacity:1; }
-        .nav-links a { color:var(--white); text-decoration:none; font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; opacity:0.6; transition:opacity 0.3s; }
+        .nav-links a { color:var(--white); text-decoration:none; font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; opacity:1; transition:opacity 0.3s; }
         .nav-links a:hover { opacity:1; }
-        .nav-contact { display:inline-block; padding:0.6rem 1.6rem; border:1px solid rgba(240,237,232,0.4); color:var(--white); text-decoration:none; font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; opacity:0; transition:opacity 0.8s ease,background 0.3s,color 0.3s; justify-self:end; }
+        .nav-contact { display:inline-block; padding:0.6rem 1.6rem; border:1px solid rgba(240,237,232,1); color:var(--white); text-decoration:none; font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; font-weight:400; opacity:0; transition:opacity 0.8s ease,background 0.3s,color 0.3s; justify-self:end; }
         .nav-contact.visible { opacity:1; }
         .nav-contact:hover { background:var(--white); color:var(--black); }
 
         /* HERO – fixed, always behind */
         #hero { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:1; }
-        #hero-bg { position:absolute; inset:0; background-image:url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1800&q=80'); background-size:cover; background-position:center; opacity:0; transform:scale(1.04); }
-        .hero-overlay { position:absolute; inset:0; background:linear-gradient(to bottom,rgba(8,8,8,0.2),rgba(8,8,8,0.55)); pointer-events:none; }
+        #hero-bg { position:absolute; inset:0; background-image:url('images/hero.jpg'); background-size:cover; background-position:center; opacity:0; transform:scale(1.04); }
         #hero-text { position:relative; text-align:center; z-index:2; opacity:0; pointer-events:none; }
+        #hero::after { content:''; position:absolute; top:0; left:0; right:0; height:260px; background:linear-gradient(to bottom, rgba(8,8,8,0.82) 0%, rgba(8,8,8,0.4) 50%, transparent 100%); pointer-events:none; z-index:1; }
         #hero-text h1 { font-family:'Cormorant Garamond',serif; font-size:clamp(3rem,8vw,7rem); font-weight:300; letter-spacing:8px; text-transform:uppercase; line-height:1; margin-bottom:1rem; }
         #hero-text p { font-size:0.85rem; letter-spacing:4px; text-transform:uppercase; color:var(--accent); }
         #scroll-hint { position:absolute; bottom:2.5rem; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:0.5rem; z-index:2; opacity:0; pointer-events:none; }
@@ -147,6 +147,50 @@
 
         @keyframes scrollPulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
 
+        /* ARC HINT */ 50%{transform:translateY(-5px)} }
+
+        /* ── SECTION ENTRANCE ANIMATIONS ────────────────────────── */
+        .om-meg-heading { opacity:0; transform:translateX(-40px); transition:opacity 0.7s ease, transform 0.7s cubic-bezier(0.16,1,0.3,1); }
+        .om-meg-heading.anim-in { opacity:1; transform:translateX(0); }
+        .om-meg-body { opacity:0; transition:opacity 0.7s ease 0.28s; }
+        .om-meg-body.anim-in { opacity:1; }
+
+        .tjeneste-num { opacity:0; transition:opacity 0.35s ease; }
+        .tjeneste-num.anim-in { opacity:1; }
+        .tjeneste-content h3 { opacity:0; transform:translateX(30px); transition:opacity 0.6s ease 0.5s, transform 0.6s cubic-bezier(0.16,1,0.3,1) 0.5s; }
+        .tjeneste-content h3.anim-in { opacity:1; transform:translateX(0); }
+        .tjeneste-content p { opacity:0; transform:translateX(30px); transition:opacity 0.6s ease 0.65s, transform 0.6s cubic-bezier(0.16,1,0.3,1) 0.65s; }
+        .tjeneste-content p.anim-in { opacity:1; transform:translateX(0); }
+
+        .pg-card { opacity:1; transition:opacity 0.5s ease; }
+
+        .kontakt-h2 { opacity:0; transform:translateY(18px); transition:opacity 0.7s ease, transform 0.7s cubic-bezier(0.16,1,0.3,1); }
+        .kontakt-h2.anim-in { opacity:1; transform:translateY(0); }
+        .kontakt-btn { opacity:0; transform:scale(0.95); }
+
+        /* ── PORTFOLIO KORT HOVER-FREMHEVING ────────────────────── */
+        .pg-card { transition: all 0.35s ease; }
+        .pg-card:hover { transform:scale(1.03); filter:brightness(1.05); z-index:10; box-shadow:0 0 0 1px rgba(240,237,232,0.3); }
+        .portfolio-grid:has(.pg-card:hover) .pg-card:not(:hover) { opacity:0.5; filter:brightness(0.7); transition: all 0.35s ease; }
+
+        /* ── PORTFOLIO HOVER LINE ────────────────────────────────── */
+        .pg-card::after { content:''; position:absolute; bottom:0; left:0; width:100%; height:1px; background:rgba(240,237,232,0.75); transform:scaleX(0); transform-origin:left center; transition:transform 0.4s ease; }
+        .pg-card:hover::after { transform:scaleX(1); }
+        .pg-card-title { transition:transform 0.3s ease; }
+        .pg-card:hover .pg-card-title { transform:translateY(-4px); }
+
+        /* ── CURSOR CAMERA ───────────────────────────────────────── */
+        .cursor-ring { transition:width 0.2s ease, height 0.2s ease, border-color 0.2s ease; color:rgba(240,237,232,0.85); }
+        .cursor-camera { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); opacity:0; transition:opacity 0.18s ease; pointer-events:none; }
+        #cursorRing.camera-mode { width:40px; height:40px; border-color:rgba(240,237,232,0.65); }
+        #cursorRing.camera-mode .cursor-camera { opacity:1; }
+
+        /* ── HERO SUBTITLE ───────────────────────────────────────── */
+        #hero-text p { opacity:0; }
+
+        /* ── AKTIV NAV-LENKE ─────────────────────────────────────── */
+        .nav-active { opacity:1 !important; border-bottom:1px solid rgba(240,237,232,0.4); padding-bottom:2px; }
+
         @media(max-width:768px){
             nav { padding:1.5rem; }
             .nav-links { display:none; }
@@ -162,7 +206,7 @@
 <body>
 
 <div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
+<div class="cursor-ring" id="cursorRing"><svg class="cursor-camera" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
 
 <div id="intro"></div>
 <div id="intro-title">Berg Boligfoto</div>
@@ -185,7 +229,6 @@
 
 <div id="hero">
     <div id="hero-bg"></div>
-    <div class="hero-overlay"></div>
     <div id="hero-text">
         <h1>Berg Boligfoto</h1>
         <p>Eiendomsfotografi · Levanger & omegn</p>
@@ -365,14 +408,14 @@ const heroBg     =document.getElementById('hero-bg');
 const sectionDots=document.getElementById('section-dots');
 
 // ── INTRO ────────────────────────────────────────────────────
-setTimeout(()=>{ introTitle.style.transition='opacity 0.9s ease'; introTitle.style.opacity='1'; },150);
+setTimeout(()=>{ introTitle.style.transition='opacity 0.6s ease'; introTitle.style.opacity='1'; },0);
 
 setTimeout(()=>{
     introHouse.style.opacity='1';
     const p=document.getElementById('house-path');
     p.style.transition='stroke-dashoffset 1.6s cubic-bezier(0.4,0,0.2,1)';
     p.style.strokeDashoffset='0';
-},1400);
+},800);
 
 setTimeout(()=>{
     navLogo.style.visibility='visible'; navLogo.style.opacity='0';
@@ -384,7 +427,7 @@ setTimeout(()=>{
     introTitle.style.transition='transform 1.8s cubic-bezier(0.16,1,0.3,1)';
     introTitle.style.transformOrigin='center center';
     introTitle.style.transform=`translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${sc})`;
-},3200);
+},2000);
 
 setTimeout(()=>{
     setTimeout(()=>{
@@ -397,14 +440,16 @@ setTimeout(()=>{
                 introTitle.style.display='none';
                 heroText.style.transition  ='opacity 1s ease';
                 heroText.style.opacity     ='1';
+                const heroSub=heroText.querySelector('p');
+                if(heroSub){ setTimeout(()=>{ heroSub.style.transition='opacity 0.8s ease'; heroSub.style.opacity='1'; },600); }
                 scrollHint.style.transition='opacity 1s ease 0.3s';
                 scrollHint.style.opacity   ='1';
                 navContact.classList.add('visible');
                 navLinks.classList.add('visible');
             },800);
-        },500);
-    },1000);
-},5000);
+        },200);
+    },400);
+},3400);
 
 // ── SCROLL STATE ─────────────────────────────────────────────
 const VH=window.innerHeight;
@@ -455,11 +500,14 @@ let wheelDelta=0, wheelTimer=null;
 function sectionTarget(idx){ return -idx*VH; }
 
 function snapTo(idx){
-    if(idx<0||idx>=NUM_SECTIONS)return;
+    if(idx<0||idx>=NUM_SECTIONS)return;    resetSection(currentSec);
     currentSec=idx;
     tT=sectionTarget(idx);
     isSnapping=true;
     updateDots();
+    setNavActive(idx);
+    setNavContact(idx !== 3);
+    animateSection(idx);
     setTimeout(()=>{ isSnapping=false; },800);
 }
 
@@ -468,7 +516,7 @@ function updateDots(){
 }
 
 function showDots(){ sectionDots.classList.add('visible'); updateDots(); }
-function hideDots(){ sectionDots.classList.remove('visible'); }
+function hideDots(){ sectionDots.classList.remove('visible'); setNavActive(-1); setNavContact(true); }
 
 // Dot clicks
 document.querySelectorAll('.sdot').forEach((d,i)=>{
@@ -488,7 +536,7 @@ function setHeroProgress(p){
     heroText.style.opacity   =String(Math.pow(1-tP,1.8));
     scrollHint.style.opacity =String(Math.max(0,1-Math.max(0,p-0.7)/0.3));
     const iP=Math.max(0,(p-0.05)/0.95);
-    heroBg.style.opacity   =String(Math.min(Math.pow(iP,1.6)*0.88,0.88));
+    heroBg.style.opacity   =String(Math.min(Math.pow(iP,1.6)*1.0,1.0));
     heroBg.style.transform =`scale(${1.04-p*0.04})`;
 }
 
@@ -504,7 +552,7 @@ document.addEventListener('wheel',e=>{
         if(accumulated>=VH){
             heroLocked=false;
             showDots();
-            snapTo(0); // smooth slide to Om Meg
+            snapTo(0);
         }
         return;
     }
@@ -514,7 +562,7 @@ document.addEventListener('wheel',e=>{
     wheelDelta+=e.deltaY;
     clearTimeout(wheelTimer);
     wheelTimer=setTimeout(()=>{ wheelDelta=0; },200);
-    if(Math.abs(wheelDelta)<40)return;
+    if(Math.abs(wheelDelta)<120)return;
 
     const dir=wheelDelta>0?1:-1;
     wheelDelta=0;
@@ -576,6 +624,136 @@ document.querySelectorAll('.nav-links a,.nav-contact').forEach(a=>{
         showDots();
         snapTo(idx);
     });
+});
+
+// ── SECTION ENTRANCE ANIMATIONS ──────────────────────────────
+let _tjRafId = null;
+let _kontaktReady = false;
+
+// Ord-for-ord animasjon: splitter tekst i <span> per ord og animerer inn
+function splitAndAnimate(el) {
+    console.log('[split] el:', el, 'innerHTML:', el?.innerHTML);
+    if (!el) return;
+    if (!el.dataset.origHtml) el.dataset.origHtml = el.innerHTML;
+    // Bevar <br>-tagger, wrap øvrige ord i spans
+    let wordIdx = 0;
+    const parts = el.innerHTML.split(/(<br\s*\/?>)/i);
+    el.innerHTML = parts.map(part => {
+        if (/^<br/i.test(part)) return part;
+        return part.split(/\s+/).filter(w => w).map(w => {
+            const d = (wordIdx++) * 120;
+            return `<span class="word-anim" style="display:inline-block;opacity:0;transform:translateY(12px);transition:opacity 0.6s ease ${d}ms,transform 0.6s cubic-bezier(0.16,1,0.3,1) ${d}ms">${w}</span>`;
+        }).join(' ');
+    }).join('');
+    requestAnimationFrame(() => {
+        el.querySelectorAll('.word-anim').forEach(s => { s.style.opacity='1'; s.style.transform='translateY(0)'; });
+    });
+}
+
+function resetWordSplit(el) {
+    if (!el || !el.dataset.origHtml) return;
+    el.innerHTML = el.dataset.origHtml;
+    delete el.dataset.origHtml;
+}
+
+function resetSection(idx) {
+    function snapEl(el) { if (!el) return; el.style.transition = 'none'; el.classList.remove('anim-in'); }
+    if (idx === 0) {
+        const h = document.querySelector('.om-meg-heading');
+        resetWordSplit(h);
+        if (h) { h.style.transition='none'; h.style.opacity=''; h.style.transform=''; h.classList.remove('anim-in'); }
+        snapEl(document.querySelector('.om-meg-body'));
+    } else if (idx === 1) {
+        if (_tjRafId) { cancelAnimationFrame(_tjRafId); _tjRafId = null; }
+        const n  = document.querySelector('.tjeneste-num');
+        const h3 = document.querySelector('.tjeneste-content h3');
+        snapEl(n); if (n) n.textContent = '00';
+        resetWordSplit(h3);
+        if (h3) { h3.style.transition='none'; h3.style.opacity=''; h3.style.transform=''; h3.classList.remove('anim-in'); }
+        snapEl(document.querySelector('.tjeneste-content p'));
+    } else if (idx === 2) {
+        document.querySelectorAll('.pg-card').forEach(c => {
+            c.style.transition = 'none'; c.style.transitionDelay = ''; c.style.opacity = '0'; c.classList.remove('anim-in');
+        });
+    } else if (idx === 3) {
+        _kontaktReady = false;
+        const h2  = document.querySelector('.kontakt-h2');
+        resetWordSplit(h2);
+        if (h2) { h2.style.transition='none'; h2.style.opacity=''; h2.style.transform=''; h2.classList.remove('anim-in'); }
+        const btn = document.querySelector('.kontakt-btn');
+        if (btn) { btn.style.transition='none'; btn.style.animation=''; btn.style.opacity='0'; btn.style.transform='scale(0.95)'; btn.classList.remove('anim-in'); }
+    }
+}
+
+function animateSection(idx) {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+        if (idx === 0) {
+            const h = document.querySelector('.om-meg-heading');
+            const b = document.querySelector('.om-meg-body');
+            if (h) { h.style.transition='none'; h.style.transform='none'; h.style.opacity='1'; splitAndAnimate(h); }
+            if (b) { b.style.transition=''; b.classList.add('anim-in'); }
+
+        } else if (idx === 1) {
+            const n  = document.querySelector('.tjeneste-num');
+            const h3 = document.querySelector('.tjeneste-content h3');
+            const p  = document.querySelector('.tjeneste-content p');
+            if (n) {
+                n.style.transition=''; n.classList.add('anim-in'); n.textContent='00';
+                let _t0 = null;
+                function countUp(ts) {
+                    if (!_t0) _t0 = ts;
+                    const prog = Math.min((ts - _t0) / 800, 1);
+                    n.textContent = String(Math.round(prog)).padStart(2, '0');
+                    if (prog < 1) _tjRafId = requestAnimationFrame(countUp); else _tjRafId = null;
+                }
+                _tjRafId = requestAnimationFrame(countUp);
+            }
+            if (h3) { h3.style.transition='none'; h3.style.transform='none'; h3.style.opacity='1'; splitAndAnimate(h3); }
+            if (p)  { p.style.transition=''; p.classList.add('anim-in'); }
+
+        } else if (idx === 2) {
+            document.querySelectorAll('.pg-card').forEach((c, i) => {
+                c.style.transition = 'opacity 0.5s ease';
+                c.style.transitionDelay = (i * 0.1) + 's';
+                c.style.opacity = '1';
+            });
+
+        } else if (idx === 3) {
+            const h2  = document.querySelector('.kontakt-h2');
+            const btn = document.querySelector('.kontakt-btn');
+            if (h2) { h2.style.transition='none'; h2.style.transform='none'; h2.style.opacity='1'; splitAndAnimate(h2); }
+            if (btn) {
+                btn.style.transition = 'opacity 0.6s ease 0.3s';
+                btn.style.opacity    = '1';
+                btn.style.transform  = 'scale(1)';
+                btn.classList.add('anim-in');
+            }
+        }
+    }));
+}
+
+// ── AKTIV NAV-LENKE ───────────────────────────────────────────
+// Kun de tre lenkene inne i .nav-links (Om Meg=0, Tjenester=1, Portefølje=2)
+// #navContact (idx 3) håndteres separat via setNavContact() og får aldri nav-active
+const _navItems = [...document.querySelectorAll('.nav-links a')];
+function setNavActive(idx) {
+    _navItems.forEach(a => a.classList.remove('nav-active'));
+    if (idx >= 0 && idx < _navItems.length && _navItems[idx]) _navItems[idx].classList.add('nav-active');
+}
+
+// ── NAVCONTACT SYNLIGHET (skjules på Kontakt-seksjonen) ───────
+function setNavContact(show) {
+    if (!navContact.classList.contains('visible')) return; // intro ikke ferdig ennå
+    navContact.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+    navContact.style.opacity   = show ? '1' : '0';
+    navContact.style.transform = show ? 'translateY(0)' : 'translateY(-10px)';
+}
+
+
+// ── CURSOR CAMERA ─────────────────────────────────────────────
+document.querySelectorAll('.pg-card').forEach(card => {
+    card.addEventListener('mouseenter', () => { ringEl.classList.add('camera-mode'); cursorEl.style.opacity = '0'; });
+    card.addEventListener('mouseleave', () => { ringEl.classList.remove('camera-mode'); cursorEl.style.opacity = '1'; });
 });
 
 document.getElementById('nav-logo').addEventListener('click',e=>{
