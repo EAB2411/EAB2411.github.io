@@ -6,14 +6,22 @@
     <title>Berg Boligfoto</title>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        :root { --black:#080808; --white:#f0ede8; --grey:#bbb; --accent:#e8d8c0; }
+        :root { --black:#080808; --white:#f0ede8; --grey:#bbb; --accent:#cbb48f; }
         * { margin:0; padding:0; box-sizing:border-box; }
         html,body { height:100%; overflow:hidden; }
         body { background:var(--black); color:var(--white); font-family:'Montserrat',sans-serif; font-weight:300; cursor:none; }
+        /* Touch-enheter: skjul custom cursor, bruk vanlig */
+        @media (hover: none), (pointer: coarse) {
+            body { cursor:auto; }
+            .cursor, .cursor-ring { display:none !important; }
+            #lightbox-close, #lightbox-prev, #lightbox-next { cursor:pointer; }
+            #hero-bb, .sdot, a, button { cursor:pointer; }
+        }
+
 
         /* CURSOR */
-        .cursor { width:8px; height:8px; background:var(--white); border-radius:50%; position:fixed; top:0; left:0; pointer-events:none; z-index:9999; transition:transform 0.15s ease; }
-        .cursor-ring { width:32px; height:32px; border:1px solid rgba(240,237,232,0.4); border-radius:50%; position:fixed; top:0; left:0; pointer-events:none; z-index:9998; }
+        .cursor { width:5px; height:5px; background:var(--white); border-radius:50%; position:fixed; top:0; left:0; pointer-events:none; z-index:9999; transition:transform 0.15s ease; }
+        .cursor-ring { width:22px; height:22px; border:1px solid rgba(240,237,232,0.4); border-radius:50%; position:fixed; top:0; left:0; pointer-events:none; z-index:9998; }
 
         /* INTRO OVERLAY */
         #intro { position:fixed; inset:0; background:var(--black); z-index:600; transition:opacity 0.8s ease; pointer-events:none; }
@@ -24,7 +32,7 @@
         #intro-title { position:fixed; left:50%; top:50%; transform:translate(-50%,-50%); font-family:'Cormorant Garamond',serif; font-size:clamp(3rem,8vw,7rem); font-weight:300; letter-spacing:8px; text-transform:uppercase; white-space:nowrap; z-index:700; opacity:0; pointer-events:none; }
 
         /* FLOATING HOUSE */
-        #intro-house { position:fixed; left:50%; top:50%; transform:translate(-50%,70px); z-index:700; opacity:0; transition:opacity 0.7s ease; pointer-events:none; }
+        #intro-house { position:fixed; left:50%; top:50%; transform:translate(-50%,-50%); z-index:700; opacity:0; transition:opacity 0.7s ease; pointer-events:none; }
         #house-path { stroke-dasharray:300; stroke-dashoffset:300; }
 
         /* NAV */
@@ -33,7 +41,10 @@
         #nav-logo.visible { opacity:1; visibility:visible; }
         .nav-links { display:flex; gap:2.5rem; align-items:center; justify-content:center; opacity:0; transition:opacity 0.8s ease; }
         .nav-links.visible { opacity:1; }
-        .nav-links a { color:var(--white); text-decoration:none; font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; opacity:1; transition:opacity 0.3s; }
+        .nav-links a { display:inline-block; color:var(--white); text-decoration:none; font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; opacity:0.85; transition:opacity 0.3s ease, text-shadow 0.3s ease, transform 0.3s cubic-bezier(0.16,1,0.3,1); }
+        .nav-links a:hover { opacity:1; text-shadow:0 0 18px rgba(240,237,232,0.9); transform:translateY(-3px); }
+        #nav-logo { display:inline-block; transition:opacity 0.5s ease, text-shadow 0.3s ease, transform 0.3s cubic-bezier(0.16,1,0.3,1); }
+        #nav-logo:hover { text-shadow:0 0 18px rgba(240,237,232,0.9); transform:translateY(-2px); }
         .nav-links a:hover { opacity:1; }
         .nav-contact { display:inline-block; padding:0.6rem 1.6rem; border:1px solid rgba(240,237,232,1); color:var(--white); text-decoration:none; font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; font-weight:400; opacity:0; transition:opacity 0.8s ease,background 0.3s,color 0.3s; justify-self:end; }
         .nav-contact.visible { opacity:1; }
@@ -41,14 +52,14 @@
 
         /* HERO – fixed, always behind */
         #hero { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:1; }
-        #hero-bg { position:absolute; inset:0; background-image:url('images/hero.jpg'); background-size:cover; background-position:center; opacity:0; transform:scale(1.04); }
+        #hero-bg { position:absolute; inset:0; background-image:url('images/hero.jpg'); background-size:cover; background-position:center; opacity:0; transform:scale(1.25); clip-path:polygon(50.00% 59.28%, 50.17% 59.78%, 50.62% 60.00%, 50.17% 60.22%, 50.00% 60.72%, 49.83% 60.22%, 49.38% 60.00%, 49.83% 59.78%); -webkit-clip-path:polygon(50.00% 59.28%, 50.17% 59.78%, 50.62% 60.00%, 50.17% 60.22%, 50.00% 60.72%, 49.83% 60.22%, 49.38% 60.00%, 49.83% 59.78%); }
         #hero-text { position:relative; text-align:center; z-index:2; opacity:0; pointer-events:none; }
         #hero::after { content:''; position:absolute; top:0; left:0; right:0; height:260px; background:linear-gradient(to bottom, rgba(8,8,8,0.82) 0%, rgba(8,8,8,0.4) 50%, transparent 100%); pointer-events:none; z-index:1; }
-        #hero-text h1 { font-family:'Cormorant Garamond',serif; font-size:clamp(3rem,8vw,7rem); font-weight:300; letter-spacing:8px; text-transform:uppercase; line-height:1; margin-bottom:1rem; }
-        #hero-text p { font-size:0.85rem; letter-spacing:4px; text-transform:uppercase; color:var(--accent); }
-        #scroll-hint { position:absolute; bottom:2.5rem; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:0.5rem; z-index:2; opacity:0; pointer-events:none; }
-        #scroll-hint span { font-size:0.6rem; letter-spacing:3px; text-transform:uppercase; color:var(--grey); }
-        .scroll-line { width:1px; height:40px; background:linear-gradient(to bottom,var(--accent),transparent); animation:scrollPulse 2s ease infinite; }
+        #hero-text h1 { font-family:'Cormorant Garamond',serif; font-size:clamp(3rem,8vw,7rem); font-weight:300; letter-spacing:8px; text-transform:uppercase; line-height:1; margin-bottom:1rem; color:var(--accent); }
+        #hero-text p { font-size:0.85rem; letter-spacing:4px; text-transform:uppercase; color:var(--white); position:relative; left:-7px; }
+        #scroll-hint { position:absolute; bottom:2.2rem; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:0.6rem; z-index:2; opacity:0; pointer-events:none; padding:1.1rem 0.6rem 1rem; background:rgba(8,8,8,0.18); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px); border-radius:50%; }
+        #scroll-hint span { font-size:0.62rem; letter-spacing:3px; margin-right:-3px; text-transform:uppercase; color:#ffffff; }
+        .scroll-line { width:1px; height:38px; background:linear-gradient(to bottom,#ffffff,rgba(255,255,255,0.1)); animation:scrollPulse 2s ease infinite; }
 
         /* MAIN CONTENT – moved via transform, NOT window.scrollTo */
         #main-content {
@@ -56,13 +67,15 @@
             top:0; left:0; right:0;
             z-index:2;
             will-change:transform;
-            /* starts below viewport: translateY(100vh) */
+            /* starts below viewport */
             transform:translateY(100vh);
+            transform:translateY(100dvh);
         }
 
         /* SECTIONS – each exactly one viewport tall */
         #main-content section {
             height:100vh;
+            height:100dvh;
             display:flex;
             flex-direction:column;
             align-items:center;
@@ -104,7 +117,7 @@
             margin-top:2rem;
         }
         #portfolio { display:flex; flex-direction:column; align-items:center; }
-        #portfolio .section-inner--wide { display:flex; flex-direction:column; height:calc(100vh - 8rem); }
+        #portfolio .section-inner--wide { display:flex; flex-direction:column; height:calc(100vh - 8rem); height:calc(100dvh - 8rem); }
         .pg-card { position:relative; overflow:hidden; cursor:pointer; min-height:0; }
         .pg-card img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.7s cubic-bezier(0.16,1,0.3,1); pointer-events:none; }
         .pg-card:hover img { transform:scale(1.04); }
@@ -182,11 +195,75 @@
         /* ── CURSOR CAMERA ───────────────────────────────────────── */
         .cursor-ring { transition:width 0.2s ease, height 0.2s ease, border-color 0.2s ease; color:rgba(240,237,232,0.85); }
         .cursor-camera { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); opacity:0; transition:opacity 0.18s ease; pointer-events:none; }
-        #cursorRing.camera-mode { width:40px; height:40px; border-color:rgba(240,237,232,0.65); }
+        #cursorRing.camera-mode { width:30px; height:30px; border-color:rgba(240,237,232,0.65); }
         #cursorRing.camera-mode .cursor-camera { opacity:1; }
 
         /* ── HERO SUBTITLE ───────────────────────────────────────── */
         #hero-text p { opacity:0; }
+
+
+        /* ── HERO BB HOVER ───────────────────────────────────────────── */
+        #hero-bb { cursor:pointer; pointer-events:auto; transform-origin:center center; transition:transform 0.35s cubic-bezier(0.16,1,0.3,1), filter 0.35s ease; }
+        #hero-bb:hover { transform:scale(1.08); filter:brightness(1.3); }
+        #hero-text:has(#hero-bb:hover) h1,
+        #hero-text:has(#hero-bb:hover) p { opacity:0.3; transition:opacity 0.35s ease; }
+        #hero-text:has(#hero-bb.activated:hover) h1,
+        #hero-text:has(#hero-bb.activated:hover) p { opacity:1; }
+        #hero-bb.activated { pointer-events:none; }
+
+        /* ── CTA: ring + ord under BB-knappen ───────────────────────── */
+        #hero-cta { display:flex; flex-direction:column; align-items:center; pointer-events:none; margin-top:2.2rem; }
+        #hero-bb-area { position:relative; display:inline-flex; align-items:center; justify-content:center; }
+        #cta-ring { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) rotate(90deg); pointer-events:none; }
+        #cta-ring circle { stroke-dasharray:339; stroke-dashoffset:339; animation:ringDraw 4.6s ease-in-out infinite; }
+        @keyframes ringDraw {
+            0%   { stroke-dashoffset:339; opacity:1; }
+            26%  { stroke-dashoffset:0;   opacity:1; }   /* ferdig tegnet */
+            33%  { opacity:0.3; }                        /* puls 1 */
+            41%  { opacity:1; }
+            49%  { opacity:0.3; }                        /* puls 2 */
+            57%  { opacity:1; }
+            64%  { stroke-dashoffset:0; opacity:1; }     /* hold */
+            90%  { stroke-dashoffset:-339; opacity:1; }  /* viskes ut */
+            100% { stroke-dashoffset:-339; opacity:1; }
+        }
+        #cta-word { margin-top:1.4rem; font-size:0.72rem; letter-spacing:5px; margin-right:-5px; text-align:center; text-transform:uppercase; color:var(--white); font-family:'Montserrat',sans-serif; animation:ctaPulse 2.4s ease-in-out infinite; }
+        @keyframes ctaPulse { 0%,100%{opacity:0.6} 50%{opacity:1} }
+
+        /* Mindre hint under nav-logo (på bildet) */
+        #navlogo-hint { position:fixed; top:3.6rem; left:3rem; font-size:0.6rem; letter-spacing:3px; text-transform:uppercase; color:#f0ede8; font-family:'Montserrat',sans-serif; opacity:0; transform:translateX(-18px); pointer-events:none; z-index:500; transition:opacity 0.7s ease, transform 0.7s cubic-bezier(0.16,1,0.3,1); }
+        #navlogo-hint.visible { opacity:0.85; transform:translateX(0); }
+
+
+
+
+        /* ── SØLV-SHINE PÅ BOKSTAVENE ────────────────────────────── */
+        #hero-title-wrap { position:relative; display:inline-block; }
+        /* Når .shining legges til, får bokstavene en sølvgradient som
+           sveiper gjennom dem innenfra. Default: vanlig hvit tekst. */
+        #hero-title-wrap h1.shining {
+            background-image: linear-gradient(
+                100deg,
+                #cbb48f 0%,
+                #cbb48f 34%,
+                #f3e6c8 44%,
+                #fffaf0 50%,
+                #f3e6c8 56%,
+                #cbb48f 66%,
+                #cbb48f 100%
+            );
+            background-size: 220% 100%;
+            background-position: 130% 0;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            animation: silverShine 1.2s cubic-bezier(0.4,0,0.2,1) forwards;
+        }
+        @keyframes silverShine {
+            from { background-position: 130% 0; }
+            to   { background-position: -60% 0; }
+        }
 
         /* ── AKTIV NAV-LENKE ─────────────────────────────────────── */
         .nav-active { opacity:1 !important; border-bottom:1px solid rgba(240,237,232,0.4); padding-bottom:2px; }
@@ -209,11 +286,17 @@
 <div class="cursor-ring" id="cursorRing"><svg class="cursor-camera" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
 
 <div id="intro"></div>
-<div id="intro-title">Berg Boligfoto</div>
+<div id="intro-title" style="display:none">Berg Boligfoto</div>
 <div id="intro-house">
-    <svg width="80" height="70" viewBox="0 0 80 70" fill="none">
-        <path id="house-path" d="M40 5 L75 35 L65 35 L65 65 L45 65 L45 48 L35 48 L35 65 L15 65 L15 35 L5 35 Z"
-              stroke="#e8d8c0" stroke-width="1.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+    <svg id="bb-logo-intro" width="120" height="90" viewBox="-5 -30 130 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Venstre B -->
+      <text id="bb-left" x="0" y="62" font-size="74" font-weight="300" fill="#cbb48f" fill-opacity="0" stroke="#cbb48f" stroke-width="0.8" font-family="Georgia, serif" stroke-dasharray="330" stroke-dashoffset="330">B</text>
+      <!-- Høyre B speilet -->
+      <g transform="translate(90,0) scale(-1,1)">
+        <text id="bb-right" x="0" y="62" font-size="74" font-weight="300" fill="#cbb48f" fill-opacity="0" stroke="#cbb48f" stroke-width="0.8" font-family="Georgia, serif" stroke-dasharray="330" stroke-dashoffset="330">B</text>
+      </g>
+      <!-- Tak – tegnes til slutt -->
+      <polyline id="bb-roof" points="0,9 45,-19 90,9" fill="none" stroke="#cbb48f" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="110" stroke-dashoffset="110"/>
     </svg>
 </div>
 
@@ -226,12 +309,31 @@
     </div>
     <a href="#kontakt" class="nav-contact" id="navContact">Kontakt</a>
 </nav>
+<div id="navlogo-hint">Tilbake</div>
 
 <div id="hero">
     <div id="hero-bg"></div>
     <div id="hero-text">
-        <h1>Berg Boligfoto</h1>
+        <div id="hero-title-wrap">
+            <h1>Berg Boligfoto</h1>
+        </div>
         <p>Eiendomsfotografi · Levanger & omegn</p>
+        <div id="hero-cta" style="opacity:0;">
+            <div id="hero-bb-area">
+                <svg id="cta-ring" width="180" height="180" viewBox="0 0 180 180" aria-hidden="true">
+                    <circle cx="90" cy="90" r="54" fill="none" stroke="#f0ede8" stroke-width="1.2"/>
+                </svg>
+                <div id="hero-bb" style="display:inline-block;">
+                    <svg width="90" height="68" viewBox="-5 -5 100 75" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <text x="0" y="62" font-size="74" font-weight="300" fill="#cbb48f" font-family="Georgia, serif">B</text>
+                        <g transform="translate(90,0) scale(-1,1)">
+                            <text x="0" y="62" font-size="74" font-weight="300" fill="#cbb48f" font-family="Georgia, serif">B</text>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+            <div id="cta-word">START</div>
+        </div>
     </div>
     <div id="scroll-hint"><span>Scroll</span><div class="scroll-line"></div></div>
 </div>
@@ -315,11 +417,11 @@ const ringEl  =document.getElementById('cursorRing');
 let mX=0,mY=0,rX=0,rY=0;
 document.addEventListener('mousemove',e=>{
     mX=e.clientX; mY=e.clientY;
-    cursorEl.style.left=(mX-4)+'px'; cursorEl.style.top=(mY-4)+'px';
+    cursorEl.style.left=(mX-2.5)+'px'; cursorEl.style.top=(mY-2.5)+'px';
 });
-(function loopRing(){ rX+=(mX-rX-16)*0.12; rY+=(mY-rY-16)*0.12; ringEl.style.left=rX+'px'; ringEl.style.top=rY+'px'; requestAnimationFrame(loopRing); })();
+(function loopRing(){ rX+=(mX-rX-11)*0.12; rY+=(mY-rY-11)*0.12; ringEl.style.left=rX+'px'; ringEl.style.top=rY+'px'; requestAnimationFrame(loopRing); })();
 function addHover(el){
-    el.addEventListener('mouseenter',()=>cursorEl.style.transform='scale(3)');
+    el.addEventListener('mouseenter',()=>cursorEl.style.transform='scale(1.8)');
     el.addEventListener('mouseleave',()=>cursorEl.style.transform='scale(1)');
 }
 document.querySelectorAll('a,button,.sdot').forEach(addHover);
@@ -403,56 +505,153 @@ const navContact =document.getElementById('navContact');
 const navLinks   =document.getElementById('navLinks');
 const heroText   =document.getElementById('hero-text');
 const scrollHint =document.getElementById('scroll-hint');
+const navlogoHint=document.getElementById('navlogo-hint');
 const mainContent=document.getElementById('main-content');
 const heroBg     =document.getElementById('hero-bg');
 const sectionDots=document.getElementById('section-dots');
 
 // ── INTRO ────────────────────────────────────────────────────
-setTimeout(()=>{ introTitle.style.transition='opacity 0.6s ease'; introTitle.style.opacity='1'; },0);
+const bbLeft  = document.getElementById('bb-left');
+const bbRight = document.getElementById('bb-right');
+const bbRoof  = document.getElementById('bb-roof');
 
-setTimeout(()=>{
-    introHouse.style.opacity='1';
-    const p=document.getElementById('house-path');
-    p.style.transition='stroke-dashoffset 1.6s cubic-bezier(0.4,0,0.2,1)';
-    p.style.strokeDashoffset='0';
-},800);
+// 1. Vis intro-house og TEGN venstre B (som blyant)
+setTimeout(() => {
+    introHouse.style.opacity = '1';
+    bbLeft.style.transition = 'stroke-dashoffset 1.1s ease';
+    bbLeft.style.strokeDashoffset = '0';
+}, 300);
+// fyll venstre B etter at omrisset er tegnet
+setTimeout(() => {
+    bbLeft.style.transition = 'fill-opacity 0.6s ease';
+    bbLeft.style.fillOpacity = '1';
+}, 1250);
 
-setTimeout(()=>{
-    navLogo.style.visibility='visible'; navLogo.style.opacity='0';
-    const toR=navLogo.getBoundingClientRect();
-    const frR=introTitle.getBoundingClientRect();
-    const dx=(toR.left+toR.width/2)-(frR.left+frR.width/2);
-    const dy=(toR.top+toR.height/2)-(frR.top+frR.height/2);
-    const sc=toR.height/frR.height;
-    introTitle.style.transition='transform 1.8s cubic-bezier(0.16,1,0.3,1)';
-    introTitle.style.transformOrigin='center center';
-    introTitle.style.transform=`translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${sc})`;
-},2000);
+// 2. Tegn høyre B
+setTimeout(() => {
+    bbRight.style.transition = 'stroke-dashoffset 1.1s ease';
+    bbRight.style.strokeDashoffset = '0';
+}, 700);
+setTimeout(() => {
+    bbRight.style.transition = 'fill-opacity 0.6s ease';
+    bbRight.style.fillOpacity = '1';
+}, 1650);
 
-setTimeout(()=>{
-    setTimeout(()=>{
-        introHouse.style.opacity='0';
-        setTimeout(()=>{
-            introEl.classList.add('fading');
-            setTimeout(()=>{
-                introEl.classList.add('gone');
-                navLogo.style.opacity='1'; navLogo.classList.add('visible');
-                introTitle.style.display='none';
-                heroText.style.transition  ='opacity 1s ease';
-                heroText.style.opacity     ='1';
-                const heroSub=heroText.querySelector('p');
-                if(heroSub){ setTimeout(()=>{ heroSub.style.transition='opacity 0.8s ease'; heroSub.style.opacity='1'; },600); }
-                scrollHint.style.transition='opacity 1s ease 0.3s';
-                scrollHint.style.opacity   ='1';
-                navContact.classList.add('visible');
-                navLinks.classList.add('visible');
-            },800);
-        },200);
-    },400);
-},3400);
+// 3. Tegn taket
+setTimeout(() => {
+    bbRoof.style.transition = 'stroke-dashoffset 0.9s cubic-bezier(0.4,0,0.2,1)';
+    bbRoof.style.strokeDashoffset = '0';
+}, 1900);
+
+// 4. Pause – så fader introen elegant ut
+setTimeout(() => {
+    introEl.classList.add('fading');
+    introHouse.style.transition = 'opacity 0.8s ease';
+    introHouse.style.opacity = '0';
+
+    setTimeout(() => {
+        introEl.classList.add('gone');
+        introTitle.style.display = 'none';
+
+        // Vis nav og hovedsiden
+        navLogo.style.opacity = '1';
+        navLogo.classList.add('visible');
+        heroText.style.transition   = 'opacity 1s ease';
+        heroText.style.opacity      = '1';
+        const heroBb = document.getElementById('hero-bb');
+        const heroCta = document.getElementById('hero-cta');
+        setTimeout(() => {
+            heroCta.style.transition = 'opacity 0.8s ease';
+            heroCta.style.opacity = '1';
+        }, 300);
+
+        // ── HERO BB KLIKK-ANIMASJON ───────────────────────────────
+        document.getElementById('hero-bb').addEventListener('click', () => {
+
+            // Stopp hover-fremheving umiddelbart
+            heroBb.classList.add('activated');
+
+            // Fade ut ring + START-ord (stopp animasjon så opacity:0 gjelder)
+            const ring = document.getElementById('cta-ring');
+            const word = document.getElementById('cta-word');
+            ring.style.transition = 'opacity 0.4s ease';
+            word.style.transition = 'opacity 0.4s ease';
+            ring.querySelector('circle').style.animation = 'none';
+            word.style.animation = 'none';
+            ring.style.opacity = '0';
+            word.style.opacity = '0';
+
+            // Steg 1: Sølv-shine gjennom bokstavene (0ms)
+            document.querySelector('#hero-title-wrap h1').classList.add('shining');
+
+            // Steg 2: Tekst glir ut (900ms – etter at shinen er ferdig)
+            setTimeout(() => {
+                const h1  = document.querySelector('#hero-title-wrap h1');
+                const sub = document.querySelector('#hero-text p');
+                h1.style.transition  = 'transform 0.7s cubic-bezier(0.4,0,1,1), opacity 0.7s ease';
+                sub.style.transition = 'transform 0.7s cubic-bezier(0.4,0,1,1), opacity 0.7s ease';
+                h1.style.transform   = 'translateX(120%)';
+                h1.style.opacity     = '0';
+                sub.style.transform  = 'translateX(-120%)';
+                sub.style.opacity    = '0';
+            }, 900);
+
+            // Steg 3: Vi flyr GJENNOM gapet (1300ms).
+            // B-ene scaleres fra gapet og helt ut av skjermen (ingen fade).
+            // Bildet er synlig KUN gjennom et hull i gapet som vokser i SAMME
+            // takt (lik ease + varighet) så bildet alltid matcher gapstørrelsen.
+            const FLY_EASE = 'cubic-bezier(0.55,0,0.9,0.45)';
+            setTimeout(() => {
+                heroBg.style.opacity = '1';
+                heroBg.style.transition =
+                    'clip-path 1.8s ' + FLY_EASE +
+                    ', -webkit-clip-path 1.8s ' + FLY_EASE +
+                    ', transform 2.0s cubic-bezier(0.16,1,0.3,1)';
+                heroBg.style.clipPath        = 'polygon(50.00% -372.00%, 152.00% -72.00%, 422.00% 60.00%, 152.00% 192.00%, 50.00% 492.00%, -52.00% 192.00%, -322.00% 60.00%, -52.00% -72.00%)';
+                heroBg.style.webkitClipPath  = 'polygon(50.00% -372.00%, 152.00% -72.00%, 422.00% 60.00%, 152.00% 192.00%, 50.00% 492.00%, -52.00% 192.00%, -322.00% 60.00%, -52.00% -72.00%)';
+                heroBg.style.transform       = 'scale(1)';
+
+                // B-ene: stor scale fra gapet → indre kanter passerer skjermkanten.
+                // Holdes fullt synlige hele veien (ingen opacity-fade).
+                heroBb.style.transition = 'transform 1.8s ' + FLY_EASE;
+                heroBb.style.transform  = 'scale(600)';
+            }, 1300);
+
+            // Steg 4: Rydd opp B-ene først NÅR de er helt ute av skjermen (3100ms)
+            setTimeout(() => {
+                heroBb.style.opacity = '0';
+                heroBb.style.display = 'none';
+            }, 3100);
+
+            // Steg 5: Lås opp – bli på bildet, brukeren scroller selv videre (3200ms)
+            setTimeout(() => {
+                heroLocked = false;
+                atImage = true;
+                currentSec = -1;
+                showDots();
+                updateDots();
+                scrollHint.style.transition = 'opacity 0.8s ease';
+                scrollHint.style.opacity    = '1';
+                navlogoHint.classList.add('visible');
+            }, 3200);
+        });
+        const heroSub = heroText.querySelector('p');
+        if (heroSub) { setTimeout(() => { heroSub.style.transition = 'opacity 0.8s ease'; heroSub.style.opacity = '1'; }, 600); }
+        navContact.classList.add('visible');
+        navLinks.classList.add('visible');
+    }, 800);
+
+}, 3400);
 
 // ── SCROLL STATE ─────────────────────────────────────────────
-const VH=window.innerHeight;
+let VH=window.innerHeight;
+window.addEventListener('resize',()=>{
+    VH=window.innerHeight;
+    // hold gjeldende posisjon korrekt etter resize/rotasjon
+    if(atImage||heroLocked){ tT=VH; cT=VH; }
+    else { tT=-currentSec*VH; cT=tT; }
+    mainContent.style.transform=`translateY(${cT}px)`;
+});
 let accumulated=0;
 let heroLocked=true;
 
@@ -479,7 +678,7 @@ mainContent.style.transform=`translateY(${VH}px)`;
 (function smoothLoop(){
     const diff=tT-cT;
     if(Math.abs(diff)>0.1){
-        cT+=diff*0.1;
+        cT+=diff*0.075;
         mainContent.style.transform=`translateY(${cT}px)`;
     }
     requestAnimationFrame(smoothLoop);
@@ -488,6 +687,7 @@ mainContent.style.transform=`translateY(${VH}px)`;
 // ── SECTION SNAPPING ─────────────────────────────────────────
 const NUM_SECTIONS=4;
 let currentSec=0;
+let atImage=false;   // true = viewing hero image (post-click), not in a section
 let isSnapping=false;
 let wheelDelta=0, wheelTimer=null;
 
@@ -500,7 +700,11 @@ let wheelDelta=0, wheelTimer=null;
 function sectionTarget(idx){ return -idx*VH; }
 
 function snapTo(idx){
-    if(idx<0||idx>=NUM_SECTIONS)return;    resetSection(currentSec);
+    if(idx<0||idx>=NUM_SECTIONS)return;
+    atImage=false;
+    scrollHint.style.opacity='0';
+    navlogoHint.classList.remove('visible');
+    resetSection(currentSec);
     currentSec=idx;
     tT=sectionTarget(idx);
     isSnapping=true;
@@ -508,7 +712,7 @@ function snapTo(idx){
     setNavActive(idx);
     setNavContact(idx !== 3);
     animateSection(idx);
-    setTimeout(()=>{ isSnapping=false; },800);
+    setTimeout(()=>{ isSnapping=false; },1100);
 }
 
 function updateDots(){
@@ -517,6 +721,21 @@ function updateDots(){
 
 function showDots(){ sectionDots.classList.add('visible'); updateDots(); }
 function hideDots(){ sectionDots.classList.remove('visible'); setNavActive(-1); setNavContact(true); }
+
+// Gå til hero-bildet (etter klikk). Bildet er allerede synlig; vi skjuler seksjonene.
+function goToImage(){
+    atImage=true;
+    scrollHint.style.opacity='1';
+    navlogoHint.classList.add('visible');
+    resetSection(currentSec);
+    currentSec=-1;
+    tT=VH;
+    isSnapping=true;
+    updateDots();
+    setNavActive(-1);
+    setNavContact(true);
+    setTimeout(()=>{ isSnapping=false; },1100);
+}
 
 // Dot clicks
 document.querySelectorAll('.sdot').forEach((d,i)=>{
@@ -534,10 +753,7 @@ function setHeroProgress(p){
     p=Math.max(0,Math.min(p,1));
     const tP=Math.min(p/0.85,1);
     heroText.style.opacity   =String(Math.pow(1-tP,1.8));
-    scrollHint.style.opacity =String(Math.max(0,1-Math.max(0,p-0.7)/0.3));
-    const iP=Math.max(0,(p-0.05)/0.95);
-    heroBg.style.opacity   =String(Math.min(Math.pow(iP,1.6)*1.0,1.0));
-    heroBg.style.transform =`scale(${1.04-p*0.04})`;
+    const heroBb=document.getElementById('hero-bb'); if(heroBb) heroBb.style.opacity=heroText.style.opacity;
 }
 
 // ── WHEEL HANDLER ─────────────────────────────────────────────
@@ -545,17 +761,8 @@ document.addEventListener('wheel',e=>{
     if(lightbox.classList.contains('open'))return;
     e.preventDefault();
 
-    // HERO PHASE
-    if(heroLocked){
-        accumulated=Math.max(0,Math.min(accumulated+e.deltaY,VH));
-        setHeroProgress(accumulated/VH);
-        if(accumulated>=VH){
-            heroLocked=false;
-            showDots();
-            snapTo(0);
-        }
-        return;
-    }
+    // HERO PHASE – click-activated, scroll does nothing here
+    if(heroLocked){ return; }
 
     // SECTION PHASE – accumulate wheel delta for trackpad support
     if(isSnapping)return;
@@ -567,21 +774,19 @@ document.addEventListener('wheel',e=>{
     const dir=wheelDelta>0?1:-1;
     wheelDelta=0;
 
+    if(atImage){
+        // På bildet: scroll ned → Om Meg, scroll opp → ingenting
+        if(dir>0) snapTo(0);
+        return;
+    }
+
     if(dir>0){
-        // Down: next section
+        // Ned: neste seksjon
         if(currentSec<NUM_SECTIONS-1) snapTo(currentSec+1);
     } else {
-        // Up: previous section or back to hero
-        if(currentSec>0){
-            snapTo(currentSec-1);
-        } else {
-            // Back to hero: slide main-content back down, re-lock hero
-            heroLocked=true;
-            accumulated=VH;
-            setHeroProgress(1); // hero bg still showing
-            tT=VH; // slide main-content back below viewport
-            hideDots();
-        }
+        // Opp: forrige seksjon, eller tilbake til bildet fra Om Meg
+        if(currentSec>0) snapTo(currentSec-1);
+        else goToImage();
     }
 },{passive:false,capture:true});
 
@@ -595,18 +800,14 @@ window.addEventListener('touchmove',e=>{
     if(!tMoved&&Math.abs(d)<10)return;
     tMoved=true; tY0=e.touches[0].clientY;
 
-    if(heroLocked){
-        accumulated=Math.max(0,Math.min(accumulated+d,VH));
-        setHeroProgress(accumulated/VH);
-        if(accumulated>=VH){ heroLocked=false; showDots(); snapTo(0); }
-        return;
-    }
+    if(heroLocked){ return; } // Click-activated
     if(isSnapping)return;
     if(Math.abs(d)<15)return;
+    if(atImage){ if(d>0) snapTo(0); return; }
     if(d>0){ if(currentSec<NUM_SECTIONS-1)snapTo(currentSec+1); }
     else    {
         if(currentSec>0)snapTo(currentSec-1);
-        else { heroLocked=true; accumulated=VH; setHeroProgress(1); tT=VH; hideDots(); }
+        else goToImage();
     }
 },{passive:false});
 
@@ -758,12 +959,53 @@ document.querySelectorAll('.pg-card').forEach(card => {
 
 document.getElementById('nav-logo').addEventListener('click',e=>{
     e.preventDefault();
-    if(!heroLocked){
-        heroLocked=true; accumulated=0; setHeroProgress(0);
-        tT=VH; cT=VH;
-        mainContent.style.transform=`translateY(${VH}px)`;
-        hideDots();
-    }
+
+    // Tilbake til start-hero (svart skjerm med tekst + BB-knapp)
+    const h1  = document.querySelector('#hero-text h1');
+    const sub = document.querySelector('#hero-text p');
+    const bb  = document.getElementById('hero-bb');
+
+    // Skjul seksjonene
+    resetSection(currentSec);
+    currentSec=-1; atImage=false; heroLocked=true;
+    tT=VH; cT=VH;
+    mainContent.style.transform=`translateY(${VH}px)`;
+    hideDots();
+    scrollHint.style.opacity='0';
+    navlogoHint.classList.remove('visible');
+
+    // Gjenopprett ring + START-ord
+    const ring=document.getElementById('cta-ring');
+    const word=document.getElementById('cta-word');
+    ring.style.transition='opacity 0.6s ease 0.3s'; ring.style.opacity='1';
+    const _circ=ring.querySelector('circle'); _circ.style.animation='none'; void _circ.offsetWidth; _circ.style.animation='ringDraw 4.6s ease-in-out infinite';
+    word.style.transition='opacity 0.6s ease 0.3s'; word.style.opacity='1'; word.style.animation='none'; void word.offsetWidth; word.style.animation='ctaPulse 2.4s ease-in-out infinite';
+
+    // Skjul bildet igjen (tilbake til klippet start-form)
+    heroBg.style.transition='opacity 0.6s ease';
+    heroBg.style.opacity='0';
+    heroBg.style.transform='scale(1.25)';
+    heroBg.style.clipPath='polygon(50.00% 59.28%, 50.17% 59.78%, 50.62% 60.00%, 50.17% 60.22%, 50.00% 60.72%, 49.83% 60.22%, 49.38% 60.00%, 49.83% 59.78%)';
+    heroBg.style.webkitClipPath='polygon(50.00% 59.28%, 50.17% 59.78%, 50.62% 60.00%, 50.17% 60.22%, 50.00% 60.72%, 49.83% 60.22%, 49.38% 60.00%, 49.83% 59.78%)';
+
+    // Nullstill tittel + subtitle
+    h1.style.transition='opacity 0.6s ease 0.3s, transform 0.6s ease 0.3s';
+    h1.classList.remove('shining');
+    h1.style.transform='translateX(0)';
+    h1.style.opacity='1';
+    sub.style.transition='opacity 0.6s ease 0.3s, transform 0.6s ease 0.3s';
+    sub.style.transform='translateX(0)';
+    sub.style.opacity='1';
+
+    // Nullstill BB-knappen
+    bb.style.display='inline-block';
+    bb.classList.remove('activated');
+    bb.style.transition='opacity 0.6s ease 0.3s, transform 0.6s ease';
+    bb.style.transform='scale(1)';
+    bb.style.opacity='1';
+
+    // Hero-tekst container synlig
+    heroText.style.opacity='1';
 });
 </script>
 </body>
