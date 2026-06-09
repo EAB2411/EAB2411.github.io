@@ -269,14 +269,48 @@
         .nav-active { opacity:1 !important; border-bottom:1px solid rgba(240,237,232,0.4); padding-bottom:2px; }
 
         @media(max-width:768px){
-            nav { padding:1.5rem; }
+            #main-content section { justify-content:flex-start; }
+            nav { padding:1.2rem 1.3rem; grid-template-columns:1fr auto; }
             .nav-links { display:none; }
+            #nav-logo { font-size:0.95rem; letter-spacing:2px; max-width:42vw; line-height:1.15; }
+            .nav-contact { padding:0.5rem 1rem; font-size:0.62rem; }
+
+            /* Hero-tittel mindre så den ikke renner utenfor */
+            #hero-text h1 { font-size:clamp(2.2rem,12vw,3.6rem); letter-spacing:3px; }
+            #hero-text p { font-size:0.7rem; letter-spacing:2px; left:-4px; }
+
+            /* Seksjonsinnhold med luft fra toppen så nav-logo ikke overlapper */
             .section-inner { padding:0 1.5rem; }
-            .om-meg-grid { grid-template-columns:1fr; gap:2rem; }
-            .tjeneste-item { grid-template-columns:1fr; gap:1rem; }
-            .portfolio-grid { grid-template-columns:1fr; grid-template-rows:repeat(4,1fr); }
+            #om-meg .section-inner, #tjenester .section-inner,
+            #portfolio .section-inner, #kontakt .section-inner { padding-top:6.5rem; }
+
+            .om-meg-grid { grid-template-columns:1fr; gap:1.2rem; padding-top:1.5rem; }
+            .om-meg-heading { font-size:2rem; }
+            .om-meg-body p { font-size:0.82rem; line-height:1.7; margin-bottom:0.8rem; }
+
+            .tjeneste-item { grid-template-columns:1fr; gap:0.6rem; padding-top:1.5rem; }
+            .tjeneste-num { font-size:3rem; }
+            .tjeneste-content h3 { font-size:1.8rem; }
+            .tjeneste-content p { font-size:0.85rem; line-height:1.7; }
+
+            /* Portefølje: 4 kort stablet, fast høyde så titler ikke kuttes */
+            #portfolio .section-inner--wide { height:auto; }
+            .portfolio-grid { grid-template-columns:1fr; grid-template-rows:none; gap:0.7rem; }
+            .pg-card img { aspect-ratio:16/10; }
+            .pg-card-title { font-size:1.1rem; }
+
+            .kontakt-h2 { font-size:2.2rem; }
+            .kontakt-p { font-size:0.85rem; }
+            .kontakt-footer { flex-direction:column; gap:0.5rem; text-align:center; }
+
             #lightbox-img-wrap { padding:0 3rem; }
-            #section-dots { right:1rem; }
+            #section-dots { right:0.8rem; }
+
+            /* CTA-ring litt mindre på mobil */
+            #cta-ring { transform:translate(-50%,-50%) rotate(90deg) scale(0.85); }
+
+            /* "Tilbake"-hint: flytt under nav-logo så den ikke overlapper */
+            #navlogo-hint { top:5rem; left:1.3rem; font-size:0.55rem; }
         }
     </style>
 </head>
