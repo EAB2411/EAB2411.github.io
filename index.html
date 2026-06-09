@@ -282,25 +282,28 @@
             /* Seksjonsinnhold med luft fra toppen så nav-logo ikke overlapper */
             .section-inner { padding:0 1.5rem; }
             #om-meg .section-inner, #tjenester .section-inner,
-            #portfolio .section-inner, #kontakt .section-inner { padding-top:5.5rem; padding-bottom:2rem; }
-            #portfolio .section-label { margin-bottom:1.2rem; }
+            #portfolio .section-inner, #kontakt .section-inner { padding-top:4.5rem; padding-bottom:1.5rem; }
+            #portfolio .section-label { margin-bottom:0.8rem; }
+            .section-label { margin-bottom:1.2rem; }
 
             .om-meg-grid { grid-template-columns:1fr; gap:1.2rem; padding-top:1.5rem; }
-            .om-meg-heading { font-size:2rem; }
-            .om-meg-body p { font-size:0.8rem; line-height:1.65; margin-bottom:0.7rem; }
-            .om-meg-heading { margin-bottom:0.5rem; }
+            .om-meg-heading { font-size:1.7rem; }
+            .om-meg-body p { font-size:0.78rem; line-height:1.6; margin-bottom:0.6rem; }
+            .om-meg-heading { margin-bottom:0.4rem; }
+            .om-meg-grid { padding-top:1rem; }
 
             .tjeneste-item { grid-template-columns:1fr; gap:0.6rem; padding-top:1.5rem; }
             .tjeneste-num { font-size:3rem; }
             .tjeneste-content h3 { font-size:1.8rem; }
             .tjeneste-content p { font-size:0.85rem; line-height:1.7; }
 
-            /* Portefølje: 4 kort stablet, fast høyde så titler ikke kuttes */
+            /* Portefølje: 2x2 grid, mindre kort så alt får plass */
             #portfolio .section-inner--wide { height:auto; }
-            .portfolio-grid { grid-template-columns:1fr; grid-template-rows:none; gap:0.7rem; }
-            .pg-card img { aspect-ratio:16/11; }
-            .pg-card-title { font-size:1rem; }
-            .pg-card-overlay { padding:1rem 0.9rem 0.8rem; }
+            .portfolio-grid { grid-template-columns:1fr 1fr; grid-template-rows:auto auto; gap:0.5rem; }
+            .pg-card img { aspect-ratio:4/3; }
+            .pg-card-title { font-size:0.78rem; letter-spacing:0.5px; }
+            .pg-card-sub { font-size:0.55rem; }
+            .pg-card-overlay { padding:0.7rem 0.6rem 0.6rem; }
 
             .kontakt-h2 { font-size:2.2rem; }
             .kontakt-p { font-size:0.85rem; }
