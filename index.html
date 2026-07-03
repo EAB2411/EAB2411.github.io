@@ -35,7 +35,7 @@
 
         /* NAV */
         nav { position:fixed; top:0; left:0; right:0; z-index:500; padding:2rem 3rem; display:grid; grid-template-columns:1fr auto 1fr; align-items:center; }
-        #nav-logo { display:inline-block; font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:400; letter-spacing:4px; text-transform:uppercase; color:var(--white); text-decoration:none; opacity:0; visibility:hidden; transition:opacity 0.5s ease, text-shadow 0.3s ease, transform 0.3s cubic-bezier(0.16,1,0.3,1); }
+        #nav-logo { display:inline-block; font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:400; letter-spacing:4px; text-transform:uppercase; color:var(--white); text-decoration:none; opacity:0; visibility:hidden; transition:opacity 0.5s ease, text-shadow 0.3s ease, transform 0.3s cubic-bezier(0.16,1,0.3,1), color 0.6s ease; }
         #nav-logo.visible { opacity:1; visibility:visible; }
         .nav-links { display:flex; gap:2.5rem; align-items:center; justify-content:center; opacity:0; transition:opacity 0.8s ease; }
         .nav-links.visible { opacity:1; }
@@ -100,7 +100,7 @@
         .tjeneste-content p { color:var(--grey); line-height:1.9; font-size:0.95rem; }
 
         /* PORTFOLIO – 2×2 grid fills the section */
-        #portfolio { padding:5rem 4rem 3rem; display:flex; flex-direction:column; align-items:center; }
+        #portfolio { padding:5rem 4rem 3rem; display:flex; flex-direction:column; align-items:center; position:relative; }
         .portfolio-grid {
             display:grid;
             grid-template-columns:repeat(2,1fr);
@@ -113,6 +113,38 @@
             margin-top:2rem;
         }
         #portfolio .section-inner--wide { display:flex; flex-direction:column; height:calc(100vh - 8rem); height:calc(100dvh - 8rem); }
+
+        /* ── KATEGORI-KARUSELL ───────────────────────────────────── */
+        .pf-viewport { position:relative; flex:1; min-height:0; width:100%; overflow:hidden; margin-top:2rem; }
+        .pf-track { display:flex; height:100%; width:100%; transition:transform 0.85s cubic-bezier(0.76,0,0.24,1); }
+        .pf-panel { flex:0 0 100%; width:100%; height:100%; }
+        .pf-panel .portfolio-grid { height:100%; margin-top:0; max-width:none; }
+        .portfolio-grid--3col { grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(3,1fr); }
+        .pf-nav { position:absolute; top:50%; transform:translateY(-50%); z-index:20; width:54px; height:54px; border-radius:50%; border:1px solid var(--accent); background:rgba(8,8,8,0.45); color:var(--white); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.3s ease, color 0.3s ease, opacity 0.4s ease; backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px); }
+        .pf-nav:hover { background:var(--accent); color:var(--black); }
+        .pf-next { right:4rem; }
+        .pf-prev { left:2.5rem; opacity:0; pointer-events:none; }
+        .pf-prev.show { opacity:1; pointer-events:auto; }
+        .pf-next.hide { opacity:0; pointer-events:none; }
+
+        /* ── NAVNLØS MEDIA: hvit bakgrunn, svart tekst (som deres side) ── */
+        #pf-logo { display:none; height:34px; width:auto; margin-right:0.5rem; color:#080808; }
+        #pf-label { transition:padding-left 0.6s cubic-bezier(0.76,0,0.24,1); }
+        #portfolio { transition:background-color 0.7s ease; }
+        #portfolio[data-cat="navnlos"] { background:#ffffff; }
+        #portfolio[data-cat="navnlos"] #pf-label { padding-left:38%; color:#080808; }
+        #portfolio[data-cat="navnlos"] #pf-logo { display:block; }
+        #portfolio[data-cat="navnlos"] .section-label::after { background:#080808; }
+        #portfolio[data-cat="navnlos"] .pf-nav { border-color:#080808; color:#080808; background:rgba(255,255,255,0.5); }
+        #portfolio[data-cat="navnlos"] .pf-nav:hover { background:#080808; color:#ffffff; }
+
+        /* Nav + prikker blir mørke når Navnløs (hvit bakgrunn) er aktiv */
+        body.pf-light #nav-logo { color:#080808; }
+        body.pf-light .nav-links a { color:#080808; }
+        body.pf-light .nav-contact { border-color:#080808; color:#080808; }
+        body.pf-light .nav-contact:hover { background:#080808; color:#ffffff; }
+        body.pf-light .sdot { background:rgba(8,8,8,0.25); }
+        body.pf-light .sdot.active { background:#080808; }
         .pg-card { position:relative; overflow:hidden; cursor:pointer; min-height:0; opacity:1; transition:all 0.35s ease; }
         .pg-card img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.7s cubic-bezier(0.16,1,0.3,1); pointer-events:none; }
         .pg-card:hover img { transform:scale(1.04); }
@@ -407,9 +439,23 @@
 
     <section id="portfolio">
         <div class="section-inner section-inner--wide">
-            <div class="section-label">Portefølje</div>
-            <div class="portfolio-grid" id="portfolioGrid"></div>
+            <div class="section-label" id="pf-label">
+                <svg id="pf-logo" viewBox="0 0 56 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <circle cx="28" cy="13" r="11" stroke="currentColor" stroke-width="1.3"/>
+                    <line x1="12" y1="36" x2="44" y2="36" stroke="currentColor" stroke-width="1.3"/>
+                </svg>
+                <span id="pf-label-text">Boligfoto</span>
+            </div>
+            <div class="pf-viewport">
+                <div class="pf-track" id="pfTrack"></div>
+            </div>
         </div>
+        <button class="pf-nav pf-next" id="pfNext" aria-label="Neste kategori">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="9,6 15,12 9,18"/></svg>
+        </button>
+        <button class="pf-nav pf-prev" id="pfPrev" aria-label="Forrige kategori">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="15,6 9,12 15,18"/></svg>
+        </button>
     </section>
 
     <section id="kontakt">
@@ -463,8 +509,9 @@ function addHover(el){
 }
 document.querySelectorAll('a,button,.sdot').forEach(addHover);
 
-// ── PORTFOLIO ────────────────────────────────────────────────
-const projects=[
+// ── PORTFOLIO: KATEGORIER ────────────────────────────────────
+const categories=[
+  { key:'boligfoto', label:'Boligfoto', projects:[
     { title:'Familievennlig hus i sentrum', sub:'Levanger · 2025',
       cover:'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
       images:['https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1200&q=80',
@@ -487,40 +534,106 @@ const projects=[
               'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80',
               'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=80',
               'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1200&q=80']}
+  ]},
+  { key:'navnlos', label:'Navnløs Media', projects:[
+    { title:'Verdal Industripark', sub:'Social media · video & bilder',
+      cover:'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80',
+      images:['https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1200&q=80',
+              'https://images.unsplash.com/photo-1497032205916-ac775f0649ae?w=1200&q=80']},
+    { title:'Nardocenteret 40 år', sub:'Event · video & bilder',
+      cover:'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&q=80',
+      images:['https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1200&q=80',
+              'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1200&q=80']},
+    { title:'Silje Opseth', sub:'Social media content',
+      cover:'https://images.unsplash.com/photo-1526401485004-46910ecc8e51?w=800&q=80',
+      images:['https://images.unsplash.com/photo-1526401485004-46910ecc8e51?w=1200&q=80']},
+    { title:'Ski Flying World Champs', sub:'Meet & Greet · Kulm',
+      cover:'https://images.unsplash.com/photo-1605540436563-5bca919ae766?w=800&q=80',
+      images:['https://images.unsplash.com/photo-1605540436563-5bca919ae766?w=1200&q=80']}
+  ]},
+  { key:'selective', label:'Selective', projects:[
+    { title:'', sub:'', cover:'images/selective-1.jpg', images:['images/selective-1.jpg']},
+    { title:'', sub:'', cover:'images/selective-2.jpg', images:['images/selective-2.jpg']},
+    { title:'', sub:'', cover:'images/selective-3.jpg', images:['images/selective-3.jpg']},
+    { title:'', sub:'', cover:'images/selective-4.jpg', images:['images/selective-4.jpg']},
+    { title:'', sub:'', cover:'images/selective-5.jpg', images:['images/selective-5.jpg']},
+    { title:'', sub:'', cover:'images/selective-6.jpg', images:['images/selective-6.jpg']},
+    { title:'', sub:'', cover:'images/selective-7.jpg', images:['images/selective-7.jpg']},
+    { title:'', sub:'', cover:'images/selective-8.jpg', images:['images/selective-8.jpg']},
+    { title:'', sub:'', cover:'images/selective-9.jpg', images:['images/selective-9.jpg']}
+  ]}
 ];
 
-const pgGrid=document.getElementById('portfolioGrid');
-projects.forEach((p,i)=>{
-    const card=document.createElement('div');
-    card.className='pg-card';
-    card.innerHTML=`<img src="${p.cover}" alt="${p.title}" loading="lazy" draggable="false">
-        <div class="pg-card-overlay">
-            <div class="pg-card-title">${p.title}</div>
-            <div class="pg-card-sub">${p.sub}</div>
-        </div>`;
-    card.addEventListener('click',()=>openLightbox(i));
-    addHover(card);
-    pgGrid.appendChild(card);
+// Bygg ett panel med grid per kategori
+const pfTrack=document.getElementById('pfTrack');
+categories.forEach((cat,ci)=>{
+    const panel=document.createElement('div');
+    panel.className='pf-panel';
+    const grid=document.createElement('div');
+    grid.className='portfolio-grid';
+    if(cat.key==='selective') grid.classList.add('portfolio-grid--3col');
+    cat.projects.forEach((p,pi)=>{
+        const card=document.createElement('div');
+        card.className='pg-card';
+        card.innerHTML=`<img src="${p.cover}" alt="${p.title}" loading="lazy" draggable="false">
+            ${p.title||p.sub ? `<div class="pg-card-overlay">
+                <div class="pg-card-title">${p.title}</div>
+                ${p.sub?`<div class="pg-card-sub">${p.sub}</div>`:''}
+            </div>` : ''}`;
+        card.addEventListener('click',()=>openLightbox(ci,pi));
+        addHover(card);
+        grid.appendChild(card);
+    });
+    panel.appendChild(grid);
+    pfTrack.appendChild(panel);
 });
+
+// ── KARUSELL-STYRING ─────────────────────────────────────────
+let pfCurrent=0;
+const pfSection=document.getElementById('portfolio');
+const pfLabelText=document.getElementById('pf-label-text');
+const pfNextBtn=document.getElementById('pfNext');
+const pfPrevBtn=document.getElementById('pfPrev');
+
+function pfUpdate(){
+    pfTrack.style.transform=`translateX(${-pfCurrent*100}%)`;
+    const cat=categories[pfCurrent];
+    pfLabelText.textContent=cat.label;
+    pfSection.dataset.cat=cat.key;
+    pfPrevBtn.classList.toggle('show', pfCurrent>0);
+    pfNextBtn.classList.toggle('hide', pfCurrent>=categories.length-1);
+}
+// Nav/prikker blir mørke kun når Navnløs (hvit bakgrunn) vises på portefølje-seksjonen
+function updatePfLight(){
+    const onNavnlos = (currentSec===2) && (categories[pfCurrent].key==='navnlos');
+    document.body.classList.toggle('pf-light', onNavnlos);
+}
+pfNextBtn.addEventListener('click',()=>{ if(pfCurrent<categories.length-1){ pfCurrent++; pfUpdate(); updatePfLight(); } });
+pfPrevBtn.addEventListener('click',()=>{ if(pfCurrent>0){ pfCurrent--; pfUpdate(); updatePfLight(); } });
+pfUpdate();
 
 // ── LIGHTBOX ─────────────────────────────────────────────────
 const lightbox =document.getElementById('lightbox');
 const lbImg    =document.getElementById('lightbox-img');
 const lbTitle  =document.getElementById('lightbox-title');
 const lbCounter=document.getElementById('lightbox-counter');
-let lbProj=0,lbIdx=0;
+let lbCat=0,lbProj=0,lbIdx=0;
 
-function openLightbox(idx){ lbProj=idx; lbIdx=0; renderLb(0); lightbox.classList.add('open'); }
+function openLightbox(catIdx,projIdx){ lbCat=catIdx; lbProj=projIdx; lbIdx=0; renderLb(0); lightbox.classList.add('open'); }
 function closeLightbox(){ lightbox.classList.remove('open'); }
 function renderLb(dir){
-    const p=projects[lbProj];
+    const p=categories[lbCat].projects[lbProj];
     lbTitle.textContent=p.title;
+    const single=p.images.length===1;
+    lbCounter.style.display=single?'none':'';
+    document.getElementById('lightbox-prev').style.display=single?'none':'';
+    document.getElementById('lightbox-next').style.display=single?'none':'';
     lbCounter.textContent=(lbIdx+1)+' / '+p.images.length;
     if(dir!==0){ lbImg.classList.add('fade'); setTimeout(()=>{ lbImg.src=p.images[lbIdx]; lbImg.classList.remove('fade'); },200); }
     else lbImg.src=p.images[lbIdx];
 }
-function lbGoNext(){ lbIdx=(lbIdx+1)%projects[lbProj].images.length; renderLb(1); }
-function lbGoPrev(){ lbIdx=(lbIdx-1+projects[lbProj].images.length)%projects[lbProj].images.length; renderLb(-1); }
+function lbGoNext(){ const imgs=categories[lbCat].projects[lbProj].images; lbIdx=(lbIdx+1)%imgs.length; renderLb(1); }
+function lbGoPrev(){ const imgs=categories[lbCat].projects[lbProj].images; lbIdx=(lbIdx-1+imgs.length)%imgs.length; renderLb(-1); }
 
 document.getElementById('lightbox-close').addEventListener('click',closeLightbox);
 document.getElementById('lightbox-next').addEventListener('click',lbGoNext);
@@ -731,6 +844,7 @@ function snapTo(idx){
     currentSec=idx;
     tT=sectionTarget(idx);
     isSnapping=true;
+    if(typeof updatePfLight==='function') updatePfLight();
     updateDots();
     setNavActive(idx);
     setNavContact(idx !== 3);
@@ -754,6 +868,7 @@ function goToImage(){
     currentSec=-1;
     tT=VH;
     isSnapping=true;
+    if(typeof updatePfLight==='function') updatePfLight();
     updateDots();
     setNavActive(-1);
     setNavContact(true);
@@ -894,7 +1009,8 @@ function resetSection(idx) {
         if (h3) { h3.style.transition='none'; h3.style.opacity=''; h3.style.transform=''; h3.classList.remove('anim-in'); }
         snapEl(document.querySelector('.tjeneste-content p'));
     } else if (idx === 2) {
-        document.querySelectorAll('.pg-card').forEach(c => {
+        const panel = pfTrack.children[pfCurrent];
+        if (panel) panel.querySelectorAll('.pg-card').forEach(c => {
             c.style.transition = 'none'; c.style.transitionDelay = ''; c.style.opacity = '0'; c.classList.remove('anim-in');
         });
     } else if (idx === 3) {
@@ -933,7 +1049,8 @@ function animateSection(idx) {
             if (p)  { p.style.transition=''; p.classList.add('anim-in'); }
 
         } else if (idx === 2) {
-            document.querySelectorAll('.pg-card').forEach((c, i) => {
+            const panel = pfTrack.children[pfCurrent];
+            if (panel) panel.querySelectorAll('.pg-card').forEach((c, i) => {
                 c.style.transition = 'opacity 0.5s ease';
                 c.style.transitionDelay = (i * 0.1) + 's';
                 c.style.opacity = '1';
@@ -988,6 +1105,7 @@ document.getElementById('nav-logo').addEventListener('click',e=>{
     // Skjul seksjonene
     resetSection(currentSec);
     currentSec=-1; atImage=false; heroLocked=true;
+    document.body.classList.remove('pf-light');
     tT=VH; cT=VH;
     mainContent.style.transform=`translateY(${VH}px)`;
     hideDots();
