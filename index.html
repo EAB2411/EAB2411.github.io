@@ -347,6 +347,10 @@
             #portfolio .section-label { margin-bottom:0.9rem; margin-left:0.4rem; }
             .portfolio-grid { grid-template-columns:1fr 1fr; grid-template-rows:auto auto; gap:0.6rem; margin-top:0; }
             .pg-card img { aspect-ratio:1/1; }
+            #portfolio { padding:0; }
+            .pf-panel--navnlos .pg-card { grid-column:1 / -1; align-self:start; }
+            .pf-panel--navnlos .pg-card img { aspect-ratio:5/3; height:auto; }
+            .pf-panel--selective .portfolio-grid { grid-template-columns:repeat(3,1fr); gap:0.4rem; }
             .pf-empty { font-size:1.25rem; letter-spacing:2px; min-height:50vh; text-align:center; }
             .pg-card-overlay { padding:0.7rem 0.65rem 0.6rem; background:linear-gradient(to top,rgba(8,8,8,0.92),rgba(8,8,8,0.5) 50%,transparent); }
             .pg-card-title { font-size:0.82rem; letter-spacing:0.3px; line-height:1.18; margin-bottom:0.15rem; }
@@ -545,7 +549,9 @@ document.querySelectorAll('a,button,.sdot').forEach(addHover);
 // En kategori med tom projects-liste viser «Prosjekter kommer snart».
 const categories=[
   { key:'boligfoto', label:'Boligfoto', projects:[] },
-  { key:'navnlos', label:'Navnløs Media', projects:[] },
+  { key:'navnlos', label:'Navnløs Media', projects:[
+    { title:'Verdal Industripark', sub:'Portretter', alt:'Fem portretter av ansatte i bedrifter i Verdal Industripark', cover:'images/navnlos-verdal-industripark.webp', link:'https://navnlos.no/#portfolio' }
+  ]},
   { key:'selective', label:'Selective', projects:[
     { title:'', sub:'', alt:'Moderne glassbygning omgitt av trær mot blå himmel', cover:'images/selective-1.webp', images:['images/selective-1.webp']},
     { title:'', sub:'', alt:'Nærbilde av grønne blader med vanndråper', cover:'images/selective-2.webp', images:['images/selective-2.webp']},
@@ -563,7 +569,7 @@ const categories=[
 const pfTrack=document.getElementById('pfTrack');
 categories.forEach((cat,ci)=>{
     const panel=document.createElement('div');
-    panel.className='pf-panel';
+    panel.className='pf-panel pf-panel--'+cat.key;
     const grid=document.createElement('div');
     grid.className='portfolio-grid';
     if(cat.key==='selective') grid.classList.add('portfolio-grid--3col');
