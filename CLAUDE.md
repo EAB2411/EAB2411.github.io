@@ -35,8 +35,10 @@ Portefølje- og markedsføringsside for Berg Boligfoto (ENK), eiendomsfoto og dr
 - Språk på siden: norsk bokmål.
 
 ## Kontakt og firmainfo
-- Det finnes ingen jobb-e-post ennå. Kontaktknappen er kommentert ut i `#kontakt` til den er på plass.
-- Org.nr. skal stå i bunnteksten. Adresse skal **ikke** vises på siden.
+- Kontakt skjer foreløpig via Instagram: https://www.instagram.com/evenaberg/ (knappen i `#kontakt`).
+- Det finnes ingen jobb-e-post ennå. En e-postknapp ligger kommentert ut i `#kontakt`, klar til bruk.
+- Org.nr. 931 783 173 står i bunnteksten. Adresse skal **ikke** vises på siden.
+- Navnløs Media: Instagram https://www.instagram.com/navnlosmedia/ og nettside https://navnlos.no/#portfolio
 
 ## Kvalitetssjekk før pull request
 - Kjør en syntakssjekk av JavaScript-en og åpne siden i en nettleser (desktop og mobilbredde) for å se at intro, seksjoner, portefølje og lightbox fungerer.
