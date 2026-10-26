@@ -170,6 +170,8 @@
         .pg-card { position:relative; overflow:hidden; cursor:pointer; min-height:0; opacity:1; transition:all 0.35s ease; }
         .pg-card img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.7s cubic-bezier(0.16,1,0.3,1); pointer-events:none; }
         .pg-card:hover img { transform:scale(1.04); }
+        .pf-panel--navnlos .pg-card:nth-child(2) img { object-position:50% 40%; }
+        .pf-panel--navnlos .pg-card:nth-child(4) img { object-position:50% 27%; }
         .pg-card-overlay { position:absolute; bottom:0; left:0; right:0; padding:1.2rem 1rem 0.9rem; background:linear-gradient(to top,rgba(8,8,8,0.85),transparent); }
         .pg-card-title { font-family:'Cormorant Garamond',serif; font-size:1rem; font-weight:400; letter-spacing:1px; margin-bottom:0.2rem; }
         .pg-card-sub { font-size:0.65rem; letter-spacing:2px; text-transform:uppercase; color:var(--accent); }
@@ -352,8 +354,13 @@
             .portfolio-grid { grid-template-columns:1fr 1fr; grid-template-rows:auto auto; gap:0.6rem; margin-top:0; }
             .pg-card img { aspect-ratio:1/1; }
             #portfolio { padding:0; }
-            .pf-panel--navnlos .pg-card { grid-column:1 / -1; align-self:start; }
-            .pf-panel--navnlos .pg-card img { aspect-ratio:5/3; height:auto; }
+            /* Navnløs: første kort (kollasj) i full bredde, resten tre i bredden under */
+            .pf-panel--navnlos .portfolio-grid { grid-template-columns:repeat(3,1fr); gap:0.4rem; }
+            .pf-panel--navnlos .pg-card { align-self:start; }
+            .pf-panel--navnlos .pg-card:first-child { grid-column:1 / -1; }
+            .pf-panel--navnlos .pg-card:first-child img { aspect-ratio:5/3; height:auto; }
+            .pf-panel--navnlos .pg-card:not(:first-child) .pg-card-title { font-size:0.72rem; }
+            .pf-panel--navnlos .pg-card:not(:first-child) .pg-card-sub { display:none; }
             .pf-panel--selective .portfolio-grid { grid-template-columns:repeat(3,1fr); gap:0.4rem; }
             .pf-empty { font-size:1.25rem; letter-spacing:2px; min-height:50vh; text-align:center; }
             .pg-card-overlay { padding:0.7rem 0.65rem 0.6rem; background:linear-gradient(to top,rgba(8,8,8,0.92),rgba(8,8,8,0.5) 50%,transparent); }
@@ -554,7 +561,10 @@ document.querySelectorAll('a,button,.sdot').forEach(addHover);
 const categories=[
   { key:'boligfoto', label:'Boligfoto', projects:[] },
   { key:'navnlos', label:'Navnløs Media', projects:[
-    { title:'Verdal Industripark', sub:'Portretter', alt:'Fem portretter av ansatte i bedrifter i Verdal Industripark', cover:'images/navnlos-verdal-industripark.webp', link:'https://navnlos.no/#portfolio' }
+    { title:'Verdal Industripark', sub:'Se på Instagram', alt:'Fem portretter av ansatte i bedrifter i Verdal Industripark', cover:'images/navnlos-verdal-industripark.webp', link:'https://www.instagram.com/navnlosmedia/' },
+    { title:'Forandringshuset', sub:'Se på Instagram', alt:'Oppslagstavle med plakater for arrangementer på Forandringshuset', cover:'images/navnlos-forandringshuset.webp', link:'https://www.instagram.com/navnlosmedia/' },
+    { title:'Thon Hotell', sub:'Se på Instagram', alt:'Dekket bord med levende lys i restauranten på Thon Hotell', cover:'images/navnlos-thon-hotell.webp', link:'https://www.instagram.com/navnlosmedia/' },
+    { title:'Nardocenteret', sub:'Se på Instagram', alt:'Tallet 40 laget av blomster, pyntet til jubileum på Nardocenteret', cover:'images/navnlos-nardocenteret.webp', link:'https://www.instagram.com/navnlosmedia/' }
   ]},
   { key:'selective', label:'Selective', projects:[
     { title:'', sub:'', alt:'Moderne glassbygning omgitt av trær mot blå himmel', cover:'images/selective-1.webp', images:['images/selective-1.webp']},
