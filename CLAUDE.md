@@ -43,3 +43,10 @@ Portefølje- og markedsføringsside for Berg Boligfoto (ENK), eiendomsfoto og dr
 ## Kvalitetssjekk før pull request
 - Kjør en syntakssjekk av JavaScript-en og åpne siden i en nettleser (desktop og mobilbredde) for å se at intro, seksjoner, portefølje og lightbox fungerer.
 - Sjekk at alle bildereferanser peker på filer som finnes.
+
+## Sikkerhet
+- `index.html` har en Content-Security-Policy (meta-tag i `<head>`). Siden får bare laste fra seg selv og Google Fonts. Legges det til en ny ekstern kilde (video, kart, skript), må CSP-en oppdateres, ellers blokkeres den.
+- Ikke legg inn eksterne skript, sporing eller tredjeparts-widgets uten at Even har godkjent det.
+- Bygg innhold med DOM-metoder (`textContent`, `createElement`), ikke `innerHTML` med data.
+- Eksterne lenker: kun `https://`, og alltid `rel="noopener noreferrer"` / `noopener,noreferrer`.
+- Aldri legg passord, API-nøkler eller andre hemmeligheter i repoet. Repoet er offentlig.
