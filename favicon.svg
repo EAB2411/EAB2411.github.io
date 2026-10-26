@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="10" fill="#080808"/>
+  <polyline points="12,24 32,12 52,24" fill="none" stroke="#cbb48f" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+  <text x="11" y="52" font-size="30" font-family="Georgia, serif" fill="#cbb48f">B</text>
+  <g transform="translate(53,0) scale(-1,1)">
+    <text x="0" y="52" font-size="30" font-family="Georgia, serif" fill="#cbb48f">B</text>
+  </g>
+</svg>
