@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Sikkerhet: siden får bare laste innhold fra seg selv og Google Fonts.
+         Nye eksterne kilder (f.eks. et innebygd videoklipp) må legges til her, ellers blokkeres de. -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <title>Berg Boligfoto – Eiendomsfotograf i Levanger</title>
     <meta name="description" content="Berg Boligfoto – eiendomsfotografi og dronefoto i Levanger og omegn. Profesjonelle boligbilder som får boligen til å skille seg ut.">
     <link rel="canonical" href="https://bergboligfoto.no/">
@@ -490,7 +494,7 @@
             <div class="section-label" style="justify-content:center">Kontakt</div>
             <h2 class="kontakt-h2">La oss skape<br>noe bra sammen</h2>
             <p class="kontakt-p">Send meg en melding på Instagram for pristilbud eller spørsmål. Jeg dekker Levanger og omkringliggende kommuner.</p>
-            <a href="https://www.instagram.com/evenaberg/" class="kontakt-btn" target="_blank" rel="noopener">Send en melding på Instagram</a>
+            <a href="https://www.instagram.com/evenaberg/" class="kontakt-btn" target="_blank" rel="noopener noreferrer">Send en melding på Instagram</a>
             <!-- Når jobb-e-post er på plass kan en e-postknapp legges til slik:
             <a href="mailto:ADRESSE@bergboligfoto.no" class="kontakt-btn">Send en e-post</a> -->
             <div class="kontakt-footer">
@@ -586,14 +590,21 @@ categories.forEach((cat,ci)=>{
         card.className='pg-card';
         card.setAttribute('role', p.link ? 'link' : 'button');
         card.tabIndex=0;
-        const altTxt=(p.alt||p.title||'').replace(/"/g,'&quot;');
         card.setAttribute('aria-label', p.alt||p.title||'Åpne bilde');
-        card.innerHTML=`<img src="${p.cover}" alt="${altTxt}" loading="lazy" draggable="false">
-            ${p.title||p.sub ? `<div class="pg-card-overlay">
-                <div class="pg-card-title">${p.title}</div>
-                ${p.sub?`<div class="pg-card-sub">${p.sub}${p.link?' ↗':''}</div>`:''}
-            </div>` : ''}`;
-        const open=()=>{ if(p.link) window.open(p.link,'_blank','noopener'); else openLightbox(ci,pi); };
+        // Bygges med DOM-metoder (ikke innerHTML), så tekst aldri tolkes som kode
+        const img=document.createElement('img');
+        img.src=p.cover; img.alt=p.alt||p.title||''; img.loading='lazy'; img.draggable=false;
+        card.appendChild(img);
+        if(p.title||p.sub){
+            const ov=document.createElement('div'); ov.className='pg-card-overlay';
+            const t=document.createElement('div'); t.className='pg-card-title'; t.textContent=p.title||'';
+            ov.appendChild(t);
+            if(p.sub){ const s=document.createElement('div'); s.className='pg-card-sub'; s.textContent=p.sub+(p.link?' ↗':''); ov.appendChild(s); }
+            card.appendChild(ov);
+        }
+        // Lenker åpnes bare hvis de er https, og uten tilgang tilbake til siden
+        const safeLink = p.link && /^https:\/\//i.test(p.link) ? p.link : null;
+        const open=()=>{ if(safeLink) window.open(safeLink,'_blank','noopener,noreferrer'); else if(!p.link) openLightbox(ci,pi); };
         card.addEventListener('click',open);
         card.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); open(); } });
         addHover(card);
